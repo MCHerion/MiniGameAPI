@@ -1,0 +1,8 @@
+name: MiniGameAPI
+main: MiniGameAPI.MainClass
+version: 1.0.0
+api-version: 1.14
+description: MiniGameAPI
+author: Elytes
+prefix: MiniGameAPI
+commands:
