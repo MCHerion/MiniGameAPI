@@ -4,22 +4,27 @@ import java.util.ArrayList;
 
 import MiniGameAPI.CustomPlayer.CustomPlayer;
 
-public class MiniGame
+public class MiniGame<P extends CustomPlayer>
 {
-	protected GameState _gameState;
-	protected ArrayList<Team<CustomPlayer>> _teams;
+	protected GameState<?> _gameState;
+	protected ArrayList<Team<P>> _teams;
 	
-	public MiniGame(GameState gameState)
+	public MiniGame(GameState<?> gameState)
 	{
 		setGameState(gameState);
 	}
 	
-	public void setGameState(GameState gameState)
+	public ArrayList<P> getAllPlayers()
+	{
+		return null;
+	}
+	
+	public void setGameState(GameState<?> gameState)
 	{
 		_gameState = gameState;
 	}
 	
-	public GameState getGameState()
+	public GameState<?> getGameState()
 	{
 		return _gameState;
 	}

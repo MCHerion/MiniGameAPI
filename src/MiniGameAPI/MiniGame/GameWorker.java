@@ -5,9 +5,9 @@ import org.bukkit.Bukkit;
 import MiniGameAPI.CustomEvents.GameStateChangedEvent;
 import PluginUtils.Flags.FlagWorker;
 
-public interface GameWorker<M extends MiniGame> extends FlagWorker<M, GameStateChangedEvent>
+public interface GameWorker<M extends MiniGame<?>> extends FlagWorker<M, GameStateChangedEvent>
 {
-	public default void changeState(M subscriber, GameState newGameState)
+	public default void changeState(M subscriber, GameState<M> newGameState)
 	{
 		subscriber.setGameState(newGameState);
 		Bukkit.getPluginManager().callEvent(new GameStateChangedEvent(newGameState));
