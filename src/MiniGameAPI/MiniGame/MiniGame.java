@@ -2,22 +2,22 @@ package MiniGameAPI.MiniGame;
 
 import java.util.ArrayList;
 
-public class Game
+public class MiniGame
 {
-	protected GameState<?> _gameState;
+	protected GameWorker<?> _gameState;
 	protected ArrayList<Team> _teams;
 	
-	public Game(GameState<?> gameState)
+	public MiniGame(GameWorker<?> gameState)
 	{
 		_gameState = gameState;
 	}
 	
-	public void setGameState(GameState<?> gameState)
+	public void setGameState(GameWorker<?> gameState)
 	{
 		_gameState = gameState;
 	}
 	
-	public GameState<?> getGameState()
+	public GameWorker<?> getGameState()
 	{
 		return _gameState;
 	}

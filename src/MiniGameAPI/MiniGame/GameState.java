@@ -1,13 +1,9 @@
 package MiniGameAPI.MiniGame;
 
-import org.bukkit.event.Event;
+import PluginUtils.Flags.Flag;
 
-import PluginUtils.Flags.FlagWorker;
-
-public interface GameState<E extends Event> extends FlagWorker<Game, E>
+public interface GameState extends Flag<MiniGame>
 {
-	public default void changeState(Game subscriber, GameState<?> newGameState)
-	{
-		subscriber.setGameState(newGameState);
-	}
+	@Override
+	public GameWorker<?> getFlagWorker();
 }
