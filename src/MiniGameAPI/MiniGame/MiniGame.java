@@ -2,14 +2,16 @@ package MiniGameAPI.MiniGame;
 
 import java.util.ArrayList;
 
+import MiniGameAPI.CustomPlayer.CustomPlayer;
+
 public class MiniGame
 {
 	protected GameState _gameState;
-	protected ArrayList<Team> _teams;
+	protected ArrayList<Team<CustomPlayer>> _teams;
 	
 	public MiniGame(GameState gameState)
 	{
-		_gameState = gameState;
+		setGameState(gameState);
 	}
 	
 	public void setGameState(GameState gameState)

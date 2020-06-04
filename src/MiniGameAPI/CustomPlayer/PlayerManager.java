@@ -1,4 +1,4 @@
-package MiniGameAPI.Player;
+package MiniGameAPI.CustomPlayer;
 
 import java.util.HashMap;
 

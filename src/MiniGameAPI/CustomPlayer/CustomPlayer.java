@@ -1,4 +1,4 @@
-package MiniGameAPI.Player;
+package MiniGameAPI.CustomPlayer;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
