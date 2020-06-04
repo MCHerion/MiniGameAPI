@@ -2,11 +2,11 @@ package MiniGameAPI.MiniGame;
 
 import PluginUtils.Flags.Flag;
 
-public interface GameState extends Flag<MiniGame>
+public interface GameState<M extends MiniGame> extends Flag<M>
 {
 	@Override
-	public GameWorker getFlagWorker();
+	public GameWorker<M> getFlagWorker();
 	
 	@Override
-	public GameWorker createFlagWorker();
+	public GameWorker<M> createFlagWorker();
 }
