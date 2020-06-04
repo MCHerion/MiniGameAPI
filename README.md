@@ -12,6 +12,6 @@ Add dependency
 <dependency>
   <groupId>com.github.MCHerion</groupId>
   <artifactId>MiniGameAPI</artifactId>
-  <version>v1.0</version>
+  <version>master-SNAPSHOT</version>
 </dependency>
 ```
