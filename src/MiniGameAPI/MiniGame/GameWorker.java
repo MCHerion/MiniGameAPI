@@ -6,7 +6,7 @@ import PluginUtils.Flags.FlagWorker;
 
 public interface GameWorker<E extends Event> extends FlagWorker<MiniGame, E>
 {
-	public default void changeState(MiniGame subscriber, GameWorker<?> newGameState)
+	public default void changeState(MiniGame subscriber, GameState newGameState)
 	{
 		subscriber.setGameState(newGameState);
 	}

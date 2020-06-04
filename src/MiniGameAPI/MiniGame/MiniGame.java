@@ -4,20 +4,20 @@ import java.util.ArrayList;
 
 public class MiniGame
 {
-	protected GameWorker<?> _gameState;
+	protected GameState _gameState;
 	protected ArrayList<Team> _teams;
 	
-	public MiniGame(GameWorker<?> gameState)
+	public MiniGame(GameState gameState)
 	{
 		_gameState = gameState;
 	}
 	
-	public void setGameState(GameWorker<?> gameState)
+	public void setGameState(GameState gameState)
 	{
 		_gameState = gameState;
 	}
 	
-	public GameWorker<?> getGameState()
+	public GameState getGameState()
 	{
 		return _gameState;
 	}
