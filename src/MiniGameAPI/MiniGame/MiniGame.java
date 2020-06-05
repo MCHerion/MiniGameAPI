@@ -2,29 +2,38 @@ package MiniGameAPI.MiniGame;
 
 import java.util.ArrayList;
 
+import org.bukkit.entity.Player;
+
 import MiniGameAPI.CustomPlayer.CustomPlayer;
 
 public class MiniGame<P extends CustomPlayer>
 {
-	protected GameState<?> _gameState;
+	protected GameState<P, MiniGame<P>> _gameState;
 	protected ArrayList<Team<P>> _teams;
 	
-	public MiniGame(GameState<?> gameState)
+	public MiniGame(GameState<P, MiniGame<P>> gameState)
 	{
 		setGameState(gameState);
 	}
 	
-	public ArrayList<P> getAllPlayers()
+	public ArrayList<P> getCustomPlayers()
 	{
 		return null;
 	}
 	
-	public void setGameState(GameState<?> gameState)
+	public ArrayList<Player> getPlayers()
 	{
-		_gameState = gameState;
+		return null;
 	}
 	
-	public GameState<?> getGameState()
+	public void setGameState(GameState<P, MiniGame<P>> gameState)
+	{
+		_gameState.unsubscribe(this);
+		_gameState = gameState;
+		_gameState.subscribe(this);
+	}
+	
+	public GameState<P, MiniGame<P>> getGameState()
 	{
 		return _gameState;
 	}
