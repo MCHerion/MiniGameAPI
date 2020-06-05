@@ -4,17 +4,19 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import MiniGameAPI.MiniGame.MiniGame;
+import MiniGameAPI.MiniGame.MiniGameHandler;
 
-public abstract class CustomPlayer
+public abstract class CustomPlayer<MG extends MiniGame<?>> implements MiniGameHandler<MG>
 {
-	protected MiniGame<?> _miniGame;
+	protected MG _miniGame;
 	
-	public MiniGame<?> getMiniGame()
+	@Override
+	public MG getMiniGame()
 	{
 		return _miniGame;
 	}
 	
-	public void playMiniGame(MiniGame<?> miniGame)
+	public void playMiniGame(MG miniGame)
 	{
 		_miniGame = miniGame;
 	}
