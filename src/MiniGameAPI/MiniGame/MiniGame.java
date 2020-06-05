@@ -6,12 +6,12 @@ import org.bukkit.entity.Player;
 
 import MiniGameAPI.CustomPlayer.CustomPlayer;
 
-public class MiniGame<P extends CustomPlayer, G extends GameState<P, MiniGame<P, ? extends GameState<P, ?>>>>
+public class MiniGame<P extends CustomPlayer>
 {
-	protected G _gameState;
+	protected GameState<P, MiniGame<P>> _gameState;
 	protected ArrayList<Team<P>> _teams;
 	
-	public MiniGame(G gameState)
+	public MiniGame(GameState<P, MiniGame<P>> gameState)
 	{
 		setGameState(gameState);
 	}
@@ -26,14 +26,14 @@ public class MiniGame<P extends CustomPlayer, G extends GameState<P, MiniGame<P,
 		return null;
 	}
 	
-	public void setGameState(G gameState)
+	public void setGameState(GameState<P, MiniGame<P>> gameState)
 	{
 		_gameState.unsubscribe(this);
 		_gameState = gameState;
 		_gameState.subscribe(this);
 	}
 	
-	public G getGameState()
+	public GameState<P, MiniGame<P>> getGameState()
 	{
 		return _gameState;
 	}
