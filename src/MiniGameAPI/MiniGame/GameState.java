@@ -10,6 +10,4 @@ public interface GameState<P extends CustomPlayer, M extends MiniGame<P>> extend
 	
 	@Override
 	public GameWorker<P, M> createFlagWorker();
-	
-	public void test();
 }
