@@ -6,7 +6,7 @@ import org.bukkit.entity.Player;
 
 import MiniGameAPI.CustomPlayer.CustomPlayer;
 
-public class MiniGame<P extends CustomPlayer, G extends GameState<P, MiniGame<P, ?>>>
+public class MiniGame<P extends CustomPlayer, G extends GameState<P, MiniGame<P, ? extends GameState<?, ?>>>>
 {
 	protected G _gameState;
 	protected ArrayList<Team<P>> _teams;
