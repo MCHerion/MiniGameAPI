@@ -7,7 +7,7 @@ import org.bukkit.entity.Player;
 
 import MiniGameAPI.CustomPlayer.CustomPlayer;
 
-public class MiniGame<P extends CustomPlayer>
+public abstract class MiniGame<P extends CustomPlayer<?>>
 {
 	protected World _world;
 	protected ArrayList<Team<P>> _teams;
@@ -31,4 +31,11 @@ public class MiniGame<P extends CustomPlayer>
 	{
 		return null;
 	}
+	
+	public ArrayList<Player> getAllPlayers()
+	{
+		return null;
+	}
+	
+	public abstract int getMaxPlayers();
 }
