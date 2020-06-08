@@ -6,7 +6,7 @@ import org.bukkit.entity.Player;
 import MiniGameAPI.MiniGame.MiniGame;
 import MiniGameAPI.MiniGame.MiniGameHandler;
 
-public abstract class CustomPlayer<MG extends MiniGame> implements MiniGameHandler<MG>
+public abstract class CustomPlayer<MG extends MiniGame<?>> implements MiniGameHandler<MG>
 {
 	protected MG _miniGame;
 	
@@ -17,7 +17,7 @@ public abstract class CustomPlayer<MG extends MiniGame> implements MiniGameHandl
 	}
 	
 	@SuppressWarnings("unchecked")
-	public void playMiniGame(MiniGame miniGame)
+	public void playMiniGame(MiniGame<?> miniGame)
 	{
 		_miniGame = (MG) miniGame;
 	}

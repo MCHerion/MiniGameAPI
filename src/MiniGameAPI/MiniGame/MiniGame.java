@@ -10,11 +10,11 @@ import org.bukkit.entity.Player;
 import MiniGameAPI.CustomEvents.PlayerJoinMiniGameEvent;
 import MiniGameAPI.CustomPlayer.CustomPlayer;
 
-public abstract class MiniGame
+public abstract class MiniGame<P extends CustomPlayer<?>>
 {
 	protected World _world;
-	protected ArrayList<CustomPlayer<?>> _players = new ArrayList<CustomPlayer<?>>();
-	protected ArrayList<CustomPlayer<?>> _spectators = new ArrayList<CustomPlayer<?>>();
+	protected ArrayList<P> _players = new ArrayList<P>();
+	protected ArrayList<P> _spectators = new ArrayList<P>();
 	
 	public MiniGame(World world)
 	{
@@ -26,17 +26,17 @@ public abstract class MiniGame
 		return _world;
 	}
 	
-	public ArrayList<CustomPlayer<?>> getCustomPlayers()
+	public ArrayList<P> getCustomPlayers()
 	{
 		return _players;
 	}
 	
-	public ArrayList<CustomPlayer<?>> getSpectators()
+	public ArrayList<P> getSpectators()
 	{
 		return _spectators;
 	}
 	
-	public void joinAsPlayer(CustomPlayer<?> player)
+	public void joinAsPlayer(P player)
 	{
 		_players.add(player);
 		player.playMiniGame(this);
@@ -44,18 +44,18 @@ public abstract class MiniGame
 		Bukkit.getPluginManager().callEvent(new PlayerJoinMiniGameEvent(this, player.getPlayer()));
 	}
 	
-	public void removePlayer(CustomPlayer<?> player)
+	public void removePlayer(P player)
 	{
 		_players.remove(player);
 	}
 	
-	public void lose(CustomPlayer<?> player)
+	public void lose(P player)
 	{
 		removePlayer(player);
 		joinAsSpectator(player);
 	}
 	
-	public void joinAsSpectator(CustomPlayer<?> player)
+	public void joinAsSpectator(P player)
 	{
 		_spectators.add(player);
 		player.getPlayer().setGameMode(GameMode.SPECTATOR);
@@ -64,7 +64,7 @@ public abstract class MiniGame
 	public ArrayList<Player> getPlayers()
 	{
 		ArrayList<Player> players = new ArrayList<Player>();
-		for(CustomPlayer<?> player : _players)
+		for(P player : _players)
 		{
 			players.add(player.getPlayer());
 		}
@@ -74,11 +74,11 @@ public abstract class MiniGame
 	public ArrayList<Player> getAllPlayers()
 	{
 		ArrayList<Player> allPlayers = new ArrayList<Player>();
-		for(CustomPlayer<?> player : _spectators)
+		for(P player : _spectators)
 		{
 			allPlayers.add(player.getPlayer());
 		}
-		for(CustomPlayer<?> player : _players)
+		for(P player : _players)
 		{
 			allPlayers.add(player.getPlayer());
 		}
