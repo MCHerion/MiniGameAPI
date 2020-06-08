@@ -11,6 +11,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.potion.PotionEffect;
 
+import MiniGameAPI.MainClass;
 import MiniGameAPI.CustomEvents.PlayerJoinMiniGameEvent;
 import MiniGameAPI.CustomPlayer.CustomPlayer;
 
@@ -23,6 +24,7 @@ public abstract class MiniGame<P extends CustomPlayer<?>> implements Listener
 	public MiniGame(World world)
 	{
 		_world = world;
+		Bukkit.getPluginManager().registerEvents(this, MainClass.getInstance());
 	}
 	
 	@EventHandler

@@ -10,6 +10,11 @@ public abstract class CustomPlayer<MG extends MiniGame<?>> implements MiniGameHa
 {
 	protected MG _miniGame;
 	
+	public boolean hasMiniGame()
+	{
+		return _miniGame != null;
+	}
+	
 	@Override
 	public MG getMiniGame()
 	{
