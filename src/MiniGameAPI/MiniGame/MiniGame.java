@@ -69,7 +69,16 @@ public abstract class MiniGame<P extends CustomPlayer<?>>
 	
 	public ArrayList<Player> getAllPlayers()
 	{
-		return null;
+		ArrayList<Player> allPlayers = new ArrayList<Player>();
+		for(P player : _spectators)
+		{
+			allPlayers.add(player.getPlayer());
+		}
+		for(P player : _players)
+		{
+			allPlayers.add(player.getPlayer());
+		}
+		return allPlayers;
 	}
 	
 	public abstract int getMaxPlayers();
