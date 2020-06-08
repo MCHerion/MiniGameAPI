@@ -10,10 +10,10 @@ public class PlayerJoinMiniGameEvent extends Event
 {
     private static final HandlerList HANDLERS = new HandlerList();
     
-	protected MiniGame<?> _miniGame;
+	protected MiniGame _miniGame;
 	protected Player _player;
     
-	public PlayerJoinMiniGameEvent(MiniGame<?> miniGame, Player player) 
+	public PlayerJoinMiniGameEvent(MiniGame miniGame, Player player) 
 	{
 		_miniGame = miniGame;
 		_player = player;
@@ -24,7 +24,7 @@ public class PlayerJoinMiniGameEvent extends Event
 		return _player;
 	}
 	
-	public MiniGame<?> getMiniGame()
+	public MiniGame getMiniGame()
 	{
 		return _miniGame;
 	}

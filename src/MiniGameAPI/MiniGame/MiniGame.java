@@ -2,17 +2,19 @@ package MiniGameAPI.MiniGame;
 
 import java.util.ArrayList;
 
+import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
+import MiniGameAPI.CustomEvents.PlayerJoinMiniGameEvent;
 import MiniGameAPI.CustomPlayer.CustomPlayer;
 
-public abstract class MiniGame<P extends CustomPlayer<?>>
+public abstract class MiniGame
 {
 	protected World _world;
-	protected ArrayList<P> _players;
-	protected ArrayList<P> _spectators;
+	protected ArrayList<CustomPlayer<?>> _players = new ArrayList<CustomPlayer<?>>();
+	protected ArrayList<CustomPlayer<?>> _spectators = new ArrayList<CustomPlayer<?>>();
 	
 	public MiniGame(World world)
 	{
@@ -24,34 +26,36 @@ public abstract class MiniGame<P extends CustomPlayer<?>>
 		return _world;
 	}
 	
-	public ArrayList<P> getCustomPlayers()
+	public ArrayList<CustomPlayer<?>> getCustomPlayers()
 	{
 		return _players;
 	}
 	
-	public ArrayList<P> getSpectators()
+	public ArrayList<CustomPlayer<?>> getSpectators()
 	{
 		return _spectators;
 	}
 	
-	public void joinAsPlayer(P player)
+	public void joinAsPlayer(CustomPlayer<?> player)
 	{
 		_players.add(player);
+		player.playMiniGame(this);
 		player.getPlayer().teleport(_world.getSpawnLocation());
+		Bukkit.getPluginManager().callEvent(new PlayerJoinMiniGameEvent(this, player.getPlayer()));
 	}
 	
-	public void removePlayer(P player)
+	public void removePlayer(CustomPlayer<?> player)
 	{
 		_players.remove(player);
 	}
 	
-	public void lose(P player)
+	public void lose(CustomPlayer<?> player)
 	{
 		removePlayer(player);
 		joinAsSpectator(player);
 	}
 	
-	public void joinAsSpectator(P player)
+	public void joinAsSpectator(CustomPlayer<?> player)
 	{
 		_spectators.add(player);
 		player.getPlayer().setGameMode(GameMode.SPECTATOR);
@@ -60,7 +64,7 @@ public abstract class MiniGame<P extends CustomPlayer<?>>
 	public ArrayList<Player> getPlayers()
 	{
 		ArrayList<Player> players = new ArrayList<Player>();
-		for(P player : _players)
+		for(CustomPlayer<?> player : _players)
 		{
 			players.add(player.getPlayer());
 		}
@@ -70,11 +74,11 @@ public abstract class MiniGame<P extends CustomPlayer<?>>
 	public ArrayList<Player> getAllPlayers()
 	{
 		ArrayList<Player> allPlayers = new ArrayList<Player>();
-		for(P player : _spectators)
+		for(CustomPlayer<?> player : _spectators)
 		{
 			allPlayers.add(player.getPlayer());
 		}
-		for(P player : _players)
+		for(CustomPlayer<?> player : _players)
 		{
 			allPlayers.add(player.getPlayer());
 		}
