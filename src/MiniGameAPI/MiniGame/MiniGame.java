@@ -57,6 +57,7 @@ public abstract class MiniGame<P extends CustomPlayer<?>> implements Listener
 		player.playMiniGame(this);
 		player.getPlayer().teleport(_world.getSpawnLocation());
 		player.getPlayer().setGameMode(GameMode.SURVIVAL);
+		player.getPlayer().getInventory().clear();
 		for(PotionEffect effect : player.getPlayer().getActivePotionEffects())
 		{
 			player.getPlayer().removePotionEffect(effect.getType());
