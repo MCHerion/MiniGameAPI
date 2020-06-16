@@ -1,27 +1,34 @@
 package MiniGameAPI.CustomEvents;
 
-import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
+import MiniGameAPI.MiniGame.GameStateType;
 import MiniGameAPI.MiniGame.MiniGame;
 
-public class PlayerJoinMiniGameEvent extends Event
+public class GameStateChangedEvent extends Event
 {
     private static final HandlerList HANDLERS = new HandlerList();
     
 	protected MiniGame<?> _miniGame;
-	protected Player _player;
+	protected GameStateType _newGameStateType;
+	protected GameStateType _lastGameStateType;
     
-	public PlayerJoinMiniGameEvent(MiniGame<?> miniGame, Player player) 
+	public GameStateChangedEvent(MiniGame<?> miniGame, GameStateType newGameStateType, GameStateType lastGameStateType) 
 	{
 		_miniGame = miniGame;
-		_player = player;
+		_newGameStateType = newGameStateType;
+		_lastGameStateType = lastGameStateType;
 	}
 	
-	public Player getPlayer()
+	public GameStateType getNewGameState()
 	{
-		return _player;
+		return _newGameStateType;
+	}
+	
+	public GameStateType getLastGameState()
+	{
+		return _lastGameStateType;
 	}
 	
 	public MiniGame<?> getMiniGame()
