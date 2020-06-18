@@ -5,8 +5,8 @@ import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
 import MiniGameAPI.CustomPlayer.CustomPlayer;
-import MiniGameAPI.MiniGame.LoseReason;
 import MiniGameAPI.MiniGame.MiniGame;
+import MiniGameAPI.MiniGame.Reasons.LoseReason;
 
 public class PlayerLosingEvent extends Event implements Cancellable
 {

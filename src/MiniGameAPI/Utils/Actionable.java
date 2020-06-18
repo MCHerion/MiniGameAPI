@@ -2,7 +2,13 @@ package MiniGameAPI.Utils;
 
 public interface Actionable 
 {
-	public void activate();
+	public default void activate()
+	{
+		
+	}
 	
-	public void deactivate();
+	public default void deactivate()
+	{
+		
+	}
 }

@@ -1,6 +1,6 @@
-package MiniGameAPI.MiniGame.LoseReasons;
+package MiniGameAPI.MiniGame.Reasons.LoseReasons;
 
-import MiniGameAPI.MiniGame.LoseReason;
+import MiniGameAPI.MiniGame.Reasons.LoseReason;
 
 public class LeftGameLoseReason extends LoseReason
 {

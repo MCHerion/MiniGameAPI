@@ -1,0 +1,11 @@
+MiniGameAPI
+MiniGameAPI.CustomEvents
+MiniGameAPI.CustomPlayer
+MiniGameAPI.CustomPlayer.Compass
+MiniGameAPI.CustomPlayer.Compass.CompassSelectors
+MiniGameAPI.MiniGame
+MiniGameAPI.MiniGame.GameFlags
+MiniGameAPI.MiniGame.GameFlags.GameRules
+MiniGameAPI.MiniGame.Reasons
+MiniGameAPI.MiniGame.Reasons.LoseReasons
+MiniGameAPI.Utils

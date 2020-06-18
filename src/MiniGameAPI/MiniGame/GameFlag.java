@@ -1,6 +1,7 @@
 package MiniGameAPI.MiniGame;
 
 import org.bukkit.Bukkit;
+import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 
 import MiniGameAPI.MainClass;
@@ -39,5 +40,10 @@ public abstract class GameFlag<MG extends MiniGame<?>> implements Listener, Acti
 	public boolean isModifiable()
 	{
 		return false;
+	}
+	
+	public void destroy()
+	{
+		HandlerList.unregisterAll(this);
 	}
 }
