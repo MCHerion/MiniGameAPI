@@ -3,7 +3,7 @@ package MiniGameAPI.CustomEvents;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
-import MiniGameAPI.MiniGame.GameStateType;
+import MiniGameAPI.MiniGame.GameState;
 import MiniGameAPI.MiniGame.MiniGame;
 
 public class GameStateChangedEvent extends Event
@@ -11,22 +11,22 @@ public class GameStateChangedEvent extends Event
     private static final HandlerList HANDLERS = new HandlerList();
     
 	protected MiniGame<?> _miniGame;
-	protected GameStateType _newGameStateType;
-	protected GameStateType _lastGameStateType;
+	protected GameState<?> _newGameStateType;
+	protected GameState<?> _lastGameStateType;
     
-	public GameStateChangedEvent(MiniGame<?> miniGame, GameStateType newGameStateType, GameStateType lastGameStateType) 
+	public GameStateChangedEvent(MiniGame<?> miniGame, GameState<?> newGameStateType, GameState<?> lastGameStateType) 
 	{
 		_miniGame = miniGame;
 		_newGameStateType = newGameStateType;
 		_lastGameStateType = lastGameStateType;
 	}
 	
-	public GameStateType getNewGameState()
+	public GameState<?> getNewGameState()
 	{
 		return _newGameStateType;
 	}
 	
-	public GameStateType getLastGameState()
+	public GameState<?> getLastGameState()
 	{
 		return _lastGameStateType;
 	}

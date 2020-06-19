@@ -4,20 +4,20 @@ import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
-import MiniGameAPI.CustomPlayer.CustomPlayer;
 import MiniGameAPI.MiniGame.MiniGame;
 import MiniGameAPI.MiniGame.Reasons.LoseReason;
+import MiniGameAPI.MiniGamePlayer.MiniGamePlayer;
 
 public class PlayerLosingEvent extends Event implements Cancellable
 {
     protected static final HandlerList HANDLERS = new HandlerList();
     
     protected MiniGame<?> _miniGame;
-    protected CustomPlayer<?> _loupGarouPlayer;
+    protected MiniGamePlayer<?> _loupGarouPlayer;
 	protected LoseReason _loseReason;
 	protected boolean _cancelled;
     
-	public PlayerLosingEvent(MiniGame<?> miniGame, CustomPlayer<?> loupGarouPlayer, LoseReason loseReason) 
+	public PlayerLosingEvent(MiniGame<?> miniGame, MiniGamePlayer<?> loupGarouPlayer, LoseReason loseReason) 
 	{
 		_miniGame = miniGame;
 		_loupGarouPlayer = loupGarouPlayer;
@@ -29,7 +29,7 @@ public class PlayerLosingEvent extends Event implements Cancellable
 		return _miniGame;
 	}
 	
-	public CustomPlayer<?> getPlayer()
+	public MiniGamePlayer<?> getPlayer()
 	{
 		return _loupGarouPlayer;
 	}

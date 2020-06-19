@@ -1,23 +1,22 @@
 package MiniGameAPI.MiniGame;
 
+import java.util.ArrayList;
+
 import org.bukkit.Bukkit;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 
 import MiniGameAPI.MainClass;
+import MiniGameAPI.MiniGame.GameFlags.GameFlagInfos;
 import MiniGameAPI.Utils.Actionable;
 
 public abstract class GameFlag<MG extends MiniGame<?>> implements Listener, Actionable, MiniGameHandler<MG>
 {
 	protected MG _miniGame;
-	protected String _name;
-	protected String[] _description;
 	
-	public GameFlag(MG miniGame, String name, String... description)
+	public GameFlag(MG miniGame)
 	{
 		_miniGame = miniGame;
-		_name = name;
-		_description = description;
 		Bukkit.getPluginManager().registerEvents(this, MainClass.getInstance());
 	}
 	
@@ -27,19 +26,19 @@ public abstract class GameFlag<MG extends MiniGame<?>> implements Listener, Acti
 		return _miniGame;
 	}
 	
+	public GameFlagInfos getGameFlagInfos()
+	{
+		return getClass().getAnnotation(GameFlagInfos.class);
+	}
+	
 	public String getName()
 	{
-		return _name;
+		return getGameFlagInfos().name();
 	}
 	
 	public String[] getDescription()
 	{
-		return _description;
-	}
-	
-	public boolean isModifiable()
-	{
-		return false;
+		return getGameFlagInfos().description();
 	}
 	
 	public void destroy()

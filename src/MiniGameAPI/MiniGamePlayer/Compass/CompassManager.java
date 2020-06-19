@@ -1,4 +1,4 @@
-package MiniGameAPI.CustomPlayer.Compass;
+package MiniGameAPI.MiniGamePlayer.Compass;
 
 import java.util.ArrayList;
 

@@ -7,12 +7,18 @@ import org.bukkit.event.player.PlayerInteractEvent;
 
 import MiniGameAPI.MiniGame.GameFlag;
 import MiniGameAPI.MiniGame.MiniGame;
+import MiniGameAPI.MiniGame.GameFlags.GameFlagInfos;
 
+@GameFlagInfos
+(
+	name = "Interdire les Containers",
+	description = { "Permet d'interdire aux joueurs d'utiliser :", "- Les coffres", "- Les fours", "- Les enderchests" }
+)
 public class AntiContainerGameFlag<MG extends MiniGame<?>> extends GameFlag<MG>
 {
 	public AntiContainerGameFlag(MG miniGame) 
 	{
-		super(miniGame, "Interdire les Containers", "Permet d'interdire aux joueurs d'utiliser :", "- Les coffres", "- Les fours", "- Les enderchests");
+		super(miniGame);
 	}
 	
 	@EventHandler

@@ -1,6 +1,6 @@
 package MiniGameAPI.MiniGame;
 
-public class TeamOption 
+public class MiniGameMap 
 {
 
 }

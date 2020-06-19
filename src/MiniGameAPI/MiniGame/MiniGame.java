@@ -1,6 +1,7 @@
 package MiniGameAPI.MiniGame;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 
 import org.bukkit.Bukkit;
@@ -18,11 +19,13 @@ import MiniGameAPI.CustomEvents.GameStateChangedEvent;
 import MiniGameAPI.CustomEvents.PlayerJoinMiniGameEvent;
 import MiniGameAPI.CustomEvents.PlayerLosingEvent;
 import MiniGameAPI.CustomEvents.PlayerLostEvent;
-import MiniGameAPI.CustomPlayer.CustomPlayer;
-import MiniGameAPI.CustomPlayer.Compass.CompassSelector;
 import MiniGameAPI.MiniGame.Reasons.LoseReason;
 import MiniGameAPI.MiniGame.Reasons.WinReason;
 import MiniGameAPI.MiniGame.Reasons.LoseReasons.LeftGameLoseReason;
+import MiniGameAPI.MiniGamePlayer.MiniGamePlayer;
+import MiniGameAPI.MiniGamePlayer.Compass.CompassSelector;
+import PluginUtils.CustomItems.CustomItem;
+import PluginUtils.CustomItems.CustomItemManager;
 import PluginUtils.Utils.Titles;
 
 /**
@@ -31,9 +34,9 @@ import PluginUtils.Utils.Titles;
  * 
  * @author Elytes
  *
- * @param <P> Type of CustomPlayer that'll be used for users.
+ * @param <P> Type of MiniGamePlayer that'll be used for users.
  */
-public abstract class MiniGame<P extends CustomPlayer<?>> implements Listener
+public abstract class MiniGame<P extends MiniGamePlayer<?>> implements Listener
 {
 	/**
 	 * Variable that store the World owned by this MiniGame
@@ -48,9 +51,15 @@ public abstract class MiniGame<P extends CustomPlayer<?>> implements Listener
 	 */
 	protected HashMap<String, P> _players = new HashMap<String, P>();
 	/**
+	 * Variable that store name of every player that played at this MiniGame
+	 */
+	protected ArrayList<String> _playedPlayers = new ArrayList<String>();
+	/**
 	 * Variable that store all spectators
 	 */
 	protected ArrayList<Player> _spectators = new ArrayList<Player>();
+	@SuppressWarnings("rawtypes")
+	protected ArrayList<Class<? extends GameFlag>> _addableGameFlags = new ArrayList<Class<? extends GameFlag>>();
 	/**
 	 * Variable that store every GameFlag of this MiniGame
 	 */
@@ -77,7 +86,10 @@ public abstract class MiniGame<P extends CustomPlayer<?>> implements Listener
 	 * Else if TeamMode is {@link TeamSelector#FORCED} or {@link TeamSelector#CHOICE}, this number will result to max players per team
 	 */
 	protected int _maxPlayers;
-
+	/**
+	 * Variable used to store every default items that every players must have all the time in their inventory
+	 */
+	protected ArrayList<CustomItem> _defaultItems = new ArrayList<CustomItem>();
 	
 	/**
 	 * Constructor of the MiniGame
@@ -88,6 +100,7 @@ public abstract class MiniGame<P extends CustomPlayer<?>> implements Listener
 	public MiniGame(World world, GameState<?> gameState, int maxPlayers)
 	{
 		_world = world;
+		resetWorldBorder();
 		generateWorld(_world);
 		_gameState = gameState;
 		_maxPlayers = maxPlayers;
@@ -118,21 +131,75 @@ public abstract class MiniGame<P extends CustomPlayer<?>> implements Listener
 		}
 	}
 	
+	/**
+	 * Method used to add default items that every players must have all the time in their inventory
+	 * 
+	 * @param items Array of registered CustomItems names
+	 */
+	public void addDefaultItems(String... items)
+	{
+		for(String item : items)
+		{
+			_defaultItems.add(CustomItemManager.getInstance().getItem(item));
+		}
+	}
+	
+	/**
+	 * Method used to get every default items that every players must have all the time in their inventory	
+	 *  
+	 * @return Every default items
+	 */
+	public ArrayList<CustomItem> getDefaultItems()
+	{
+		return _defaultItems;
+	}
+	
+	/**
+	 * Method used to get the WorldBorder of the World owned by this MiniGame
+	 * 
+	 * @return WorldBorder of the World owned by this MiniGame
+	 */
 	public WorldBorder getWorldBorder()
 	{
 		return getWorld().getWorldBorder();
 	}
 	
+	/**
+	 * Method used to reset the WorldBorder of the World owned by this MiniGame
+	 * 
+	 * @see {@link #getWorldBorder()}
+	 * @see {@link WorldBorder#reset()}
+	 */
+	public void resetWorldBorder()
+	{
+		getWorldBorder().reset();
+	}
+	
+	/**
+	 * Method used to get TeamManager of this MiniGame
+	 * 
+	 * @return TeamManager of this MiniGame
+	 */
 	public TeamManager getTeamManager()
 	{
 		return _teamManager;
 	}
 	
+	/**
+	 * Method used to get the TeamSelector of this MiniGame
+	 * 
+	 * @return TeamSelector of this MiniGame
+	 */
 	public TeamSelector getTeamSelector()
 	{
 		return _teamSelector;
 	}
 	
+	/**
+	 * Method used to define the global GameMode of this MiniGame
+	 * 
+	 * @param gameMode GameMode to apply to every players
+	 */
 	public void changeGameMode(GameMode gameMode)
 	{
 		_gameMode = gameMode;
@@ -142,10 +209,15 @@ public abstract class MiniGame<P extends CustomPlayer<?>> implements Listener
 		}
 	}
 	
+	/**
+	 * Method used to set a global CompassSelector to every players in this MiniGame
+	 * 
+	 * @param compassSelector Instance of CompassSelector we want to set
+	 */
 	public void setCompassSelector(CompassSelector compassSelector)
 	{
 		_compassSelector = compassSelector;
-		for(P player : getCustomPlayers())
+		for(P player : getMiniGamePlayers())
 		{
 			player.getCompassManager().setCompassSelector(_compassSelector);
 		}
@@ -181,6 +253,7 @@ public abstract class MiniGame<P extends CustomPlayer<?>> implements Listener
 	@SuppressWarnings("unchecked")
 	public void addGameFlag(GameFlag<?> gameFlag)
 	{
+		removeGameFlag(gameFlag.getClass());
 		if(!hasGameFlag((Class<? extends GameFlag<?>>) gameFlag.getClass()))
 		{
 			_gameFlags.add(gameFlag);
@@ -193,7 +266,8 @@ public abstract class MiniGame<P extends CustomPlayer<?>> implements Listener
 	 * 
 	 * @param gameFlagType Class that represents the type of the GameFlag we want to remove
 	 */
-	public void removeGameFlag(Class<? extends GameFlag<?>> gameFlagType)
+	@SuppressWarnings("rawtypes")
+	public void removeGameFlag(Class<? extends GameFlag> gameFlagType)
 	{
 		GameFlag<?> toRemove = null;
 		for(GameFlag<?> gameFlag : _gameFlags)
@@ -212,12 +286,25 @@ public abstract class MiniGame<P extends CustomPlayer<?>> implements Listener
 	}
 	
 	/**
-	 * Method used to check if this MiniGame contains a specific flag
+	 * Method used to check if this MiniGame contains a specific flag using a GameFlag instance
+	 * 
+	 * @param gameFlag Instance of the GameFlag we are searching for
+	 * @return true if this MiniGame contains the specific flag
+	 * @see {@link #hasGameFlag(Class)}
+	 */
+	public boolean hasGameFlag(GameFlag<?> gameFlag)
+	{
+		return hasGameFlag(gameFlag.getClass());
+	}
+	
+	/**
+	 * Method used to check if this MiniGame contains a specific flag using his class
 	 * 
 	 * @param gameFlagType Class that represents the type of the GameFlag we are searching for
-	 * @return The GameFlag associated at the specified type
+	 * @return true if this MiniGame contains the specific flag type
 	 */
-	public boolean hasGameFlag(Class<? extends GameFlag<?>> gameFlagType)
+	@SuppressWarnings("rawtypes")
+	public boolean hasGameFlag(Class<? extends GameFlag> gameFlagType)
 	{
 		boolean hasGameFlag = false;
 		for(GameFlag<?> gameFlag : _gameFlags)
@@ -265,7 +352,7 @@ public abstract class MiniGame<P extends CustomPlayer<?>> implements Listener
 	 */
 	public void sendMessage(Player player, String message)
 	{
-		player.sendMessage(getMiniGameTag() + message);
+		player.sendMessage(getMiniGameTag() + " " + message);
 	}
 	
 	/**
@@ -332,15 +419,27 @@ public abstract class MiniGame<P extends CustomPlayer<?>> implements Listener
 		// Activating the new GameState
 		_gameState.activate();
 		// Calling GameStateChangedEvent
-		Bukkit.getPluginManager().callEvent(new GameStateChangedEvent(this, _gameState.getGameStateType(), lastGameState.getGameStateType()));
+		Bukkit.getPluginManager().callEvent(new GameStateChangedEvent(this, _gameState, lastGameState));
+	}
+	
+	@SuppressWarnings("rawtypes")
+	public void registerAddableGameFlags(Class<? extends GameFlag> gameFlags)
+	{
+		_addableGameFlags.add(gameFlags);
+	}
+	
+	@SuppressWarnings("rawtypes")
+	public ArrayList<Class<? extends GameFlag>> getAddableGameFlags()
+	{
+		return _addableGameFlags;
 	}
 	
 	/**
-	 * Method used to get all playing CustomPlayers of this MiniGame
+	 * Method used to get all playing MiniGamePlayer of this MiniGame
 	 * 
-	 * @return All playing CustomPlayers of this MiniGame
+	 * @return All playing MiniGamePlayer of this MiniGame
 	 */
-	public ArrayList<P> getCustomPlayers()
+	public ArrayList<P> getMiniGamePlayers()
 	{
 		ArrayList<P> players = new ArrayList<P>();
 		players.addAll(_players.values());
@@ -366,6 +465,12 @@ public abstract class MiniGame<P extends CustomPlayer<?>> implements Listener
 	{
 		_players.remove(player.getName());
 		_spectators.remove(player);
+		// If actual GameState still accept players to join
+		if(getGameState().canJoin())
+		{
+			// Removing the player from played players cause we suppose that the MiniGame didn't start so we can't consider that this player played at this MiniGame
+			_playedPlayers.remove(player.getName());
+		}
 	}
 	
 	/**
@@ -421,14 +526,17 @@ public abstract class MiniGame<P extends CustomPlayer<?>> implements Listener
 	 */
 	public void joinAsPlayer(Player player)
 	{
+		// If this MiniGame isn't full
 		if(!isFull())
 		{
-			P customPlayer = createPlayer(player);
-			_players.put(player.getName(), customPlayer);
+			P MiniGamePlayer = createPlayer(player);
+			_players.put(player.getName(), MiniGamePlayer);
+			// Adding this player as a player that played to this MiniGame
+			_playedPlayers.add(player.getName());
 			player.teleport(_world.getSpawnLocation());
 			player.setGameMode(_gameMode);
-			customPlayer.clearInventory();
-			customPlayer.getCompassManager().setCompassSelector(_compassSelector);
+			MiniGamePlayer.clearInventory();
+			MiniGamePlayer.getCompassManager().setCompassSelector(_compassSelector);
 			for(PotionEffect effect : player.getActivePotionEffects())
 			{
 				player.removePotionEffect(effect.getType());
@@ -436,7 +544,7 @@ public abstract class MiniGame<P extends CustomPlayer<?>> implements Listener
 			Team team = _teamManager.findTeam();
 			if(team != null)
 			{
-				team.addPlayer(customPlayer);
+				team.addPlayer(MiniGamePlayer);
 			}
 			Bukkit.getPluginManager().callEvent(new PlayerJoinMiniGameEvent(this, player));
 		}
@@ -454,11 +562,21 @@ public abstract class MiniGame<P extends CustomPlayer<?>> implements Listener
 	public ArrayList<Player> getPlayers()
 	{
 		ArrayList<Player> players = new ArrayList<Player>();
-		for(P player : getCustomPlayers())
+		for(P player : getMiniGamePlayers())
 		{
 			players.add(player.getPlayer());
 		}
 		return players;
+	}
+	
+	/**
+	 * Method used to get all players that has played at this MiniGame
+	 * 
+	 * @return All players that has played
+	 */
+	public ArrayList<String> getPlayedPlayers()
+	{
+		return _playedPlayers;
 	}
 	
 	/**
@@ -475,27 +593,48 @@ public abstract class MiniGame<P extends CustomPlayer<?>> implements Listener
 	}
 	
 	/**
-	 * Method used to get a CustomPlayer by a specific Player object
-	 * @param player Player we want to get CustomPlayer of
-	 * @return CustomPlayer associated to this Player
+	 * Method used to get a MiniGamePlayer by a specific Player object
+	 * 
+	 * @param player Player we want to get MiniGamePlayer of
+	 * @return MiniGamePlayer associated to this Player
 	 */
 	public P getCustomPlayer(Player player)
 	{
 		return _players.get(player.getName());
 	}
 	
+	/**
+	 * Method used to check if this MiniGame is full
+	 * 
+	 * @return true if this MiniGame is full, else false
+	 */
 	public boolean isFull()
 	{
 		return getPlayersAmount() >= getMaxPlayers();
 	}
 	
+	/**
+	 * Method used to get actual amount of players in this MiniGame
+	 * 
+	 * @return Amount of players in this MiniGame
+	 */
 	public int getPlayersAmount()
 	{
 		return getPlayers().size();
 	}
 	
 	/**
-	 * Method used to get max players of this MiniGame
+	 * Method used to get amount of players that has played at this MiniGame
+	 * 
+	 * @return Amount of players that has played
+	 */
+	public int getPlayedPlayersAmount()
+	{
+		return getPlayedPlayers().size();
+	}
+	
+	/**
+	 * Method used to get max amount players of this MiniGame
 	 * 
 	 * @return Max players of this MiniGame
 	 */
@@ -516,6 +655,13 @@ public abstract class MiniGame<P extends CustomPlayer<?>> implements Listener
 	}
 	
 	/**
+	 * Method used to get minimum amount of players to start this MiniGame
+	 * 
+	 * @return Minimum amount of players to start this MiniGame
+	 */
+	public abstract int getMinPlayers();
+	
+	/**
 	 * Method used to get this MiniGame tag which will be used to send messages for example
 	 * 
 	 * @return Tag of this MiniGame
@@ -524,10 +670,10 @@ public abstract class MiniGame<P extends CustomPlayer<?>> implements Listener
 	public abstract String getMiniGameTag();
 	
 	/**
-	 * Method used to create a CustomPlayer object (P type)
+	 * Method used to create a MiniGamePlayer object (P type)
 	 * 
-	 * @param player Player we want to create a CustomPlayer for
-	 * @return Created CustomPlayer
+	 * @param player Player we want to create a MiniGamePlayer for
+	 * @return Created MiniGamePlayer
 	 */
 	public abstract P createPlayer(Player player);
 	
@@ -536,16 +682,20 @@ public abstract class MiniGame<P extends CustomPlayer<?>> implements Listener
 		
 	}
 	
+	/**
+	 * Method used to destroy this MiniGame after it's end
+	 */
 	public void destroy()
 	{
 		HandlerList.unregisterAll(this);
+		resetWorldBorder();
 		for(GameFlag<?> gameFlag : _gameFlags)
 		{
 			gameFlag.destroy();
 		}
-		for(P customPlayer : getCustomPlayers())
+		for(P MiniGamePlayer : getMiniGamePlayers())
 		{
-			customPlayer.destroy();
+			MiniGamePlayer.destroy();
 		}
 	}
 }

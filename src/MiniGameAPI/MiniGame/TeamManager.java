@@ -14,9 +14,9 @@ public class TeamManager implements MiniGameHandler<MiniGame<?>>
 	
 	public void createTeams(int amount)
 	{
-		for(int i=0; i<amount; ++i)
+		for(int i=0; i<amount && i<TeamColor.values().length; ++i)
 		{
-			addTeam(new Team());
+			addTeam(new Team(_miniGame, TeamColor.values()[i]));
 		}
 	}
 	

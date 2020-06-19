@@ -8,12 +8,19 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 
 import MiniGameAPI.MiniGame.GameFlag;
 import MiniGameAPI.MiniGame.MiniGame;
+import MiniGameAPI.MiniGame.GameFlags.GameFlagInfos;
+import MiniGameAPI.MiniGamePlayer.MiniGamePlayer;
 
+@GameFlagInfos
+(
+	name = "Interdire le PVP",
+	description = { "Permet d'interdire le PVP à tous les joueurs du mini-jeu" }
+)
 public class AntiPVPGameFlag<MG extends MiniGame<?>> extends GameFlag<MG>
 {
 	public AntiPVPGameFlag(MG miniGame) 
 	{
-		super(miniGame, "Interdire le PVP", "Permet d'interdire le PVP à tous les joueurs du mini-jeu");
+		super(miniGame);
 	}
 	
 	@EventHandler
@@ -24,6 +31,7 @@ public class AntiPVPGameFlag<MG extends MiniGame<?>> extends GameFlag<MG>
 			if(event.getDamager() instanceof LivingEntity && event.getEntity() instanceof Player)
 			{
 				Player damager = null;
+				Player damaged = (Player) event.getEntity();
 				if(damager instanceof Player)
 				{
 					damager = (Player) event.getDamager();
@@ -37,9 +45,17 @@ public class AntiPVPGameFlag<MG extends MiniGame<?>> extends GameFlag<MG>
 				}
 				if(damager != null)
 				{
-					event.setCancelled(true);
+					if(check(_miniGame.getCustomPlayer(damager), _miniGame.getCustomPlayer(damaged)))
+					{
+						event.setCancelled(true);
+					}
 				}
 			}
 		}
+	}
+	
+	public boolean check(MiniGamePlayer<?> damagerPlayer, MiniGamePlayer<?> damagedPlayer)
+	{
+		return true;
 	}
 }

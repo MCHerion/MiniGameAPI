@@ -5,62 +5,52 @@ import java.util.HashMap;
 
 import org.bukkit.Material;
 
-import MiniGameAPI.CustomPlayer.CustomPlayer;
+import MiniGameAPI.MiniGamePlayer.MiniGamePlayer;
+import net.md_5.bungee.api.ChatColor;
 
 public class Team implements MiniGameHandler<MiniGame<?>>
 {
 	protected MiniGame<?> _miniGame;
-	protected String _name;
-	protected Material _icone;
-	protected HashMap<CustomPlayer<?>, Boolean> _players = new HashMap<CustomPlayer<?>, Boolean>();
+	protected TeamColor _teamColor;
+	protected HashMap<MiniGamePlayer<?>, Boolean> _players = new HashMap<MiniGamePlayer<?>, Boolean>();
 	
-	public Team(MiniGame<?> miniGame, String name, Material icone)
+	public Team(MiniGame<?> miniGame, TeamColor teamColor)
 	{
 		_miniGame = miniGame;
-		_name = name;
-		_icone = icone;
+		_teamColor = teamColor;
 	}
 	
-	public String getName()
+	public String getTag()
 	{
-		return _name;
+		return ChatColor.GRAY + "[" + _teamColor.getName() + ChatColor.GRAY + "]";
 	}
 	
-	public void setName(String name)
+	public TeamColor getTeamColor()
 	{
-		_name = name;
+		return _teamColor;
 	}
 	
-	public Material getIcone()
-	{
-		return _icone;
-	}
-	
-	public void setIcone(Material icone)
-	{
-		_icone = icone;
-	}
-	
-	public void addPlayer(CustomPlayer<?> player)
+	public void addPlayer(MiniGamePlayer<?> player)
 	{
 		addPlayer(player, false);
 	}
 	
-	public void addPlayer(CustomPlayer<?> player, boolean adminMode)
+	public void addPlayer(MiniGamePlayer<?> player, boolean adminMode)
 	{
 		if(!_miniGame.isFull())
 		{
 			_players.put(player, adminMode);
 			player.setTeam(this);
+			
 		}
 	}
 	
-	public void removePlayer(CustomPlayer<?> player)
+	public void removePlayer(MiniGamePlayer<?> player)
 	{
 		_players.remove(player);
 	}
 	
-	public boolean hasPlayer(CustomPlayer<?> player)
+	public boolean hasPlayer(MiniGamePlayer<?> player)
 	{
 		return _players.containsKey(player);
 	}
@@ -70,9 +60,9 @@ public class Team implements MiniGameHandler<MiniGame<?>>
 		return getPlayers().size();
 	}
 	
-	public ArrayList<CustomPlayer<?>> getPlayers()
+	public ArrayList<MiniGamePlayer<?>> getPlayers()
 	{
-		ArrayList<CustomPlayer<?>> players = new ArrayList<CustomPlayer<?>>();
+		ArrayList<MiniGamePlayer<?>> players = new ArrayList<MiniGamePlayer<?>>();
 		players.addAll(_players.keySet());
 		return players;
 	}

@@ -2,19 +2,20 @@ package MiniGameAPI.CustomEvents;
 
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
-import MiniGameAPI.CustomPlayer.CustomPlayer;
+
 import MiniGameAPI.MiniGame.MiniGame;
 import MiniGameAPI.MiniGame.Reasons.LoseReason;
+import MiniGameAPI.MiniGamePlayer.MiniGamePlayer;
 
 public class PlayerLostEvent extends Event
 {
     protected static final HandlerList HANDLERS = new HandlerList();
     
     protected MiniGame<?> _miniGame;
-    protected CustomPlayer<?> _loupGarouPlayer;
+    protected MiniGamePlayer<?> _loupGarouPlayer;
 	protected LoseReason _loseReason;
     
-	public PlayerLostEvent(MiniGame<?> miniGame, CustomPlayer<?> loupGarouPlayer, LoseReason loseReason) 
+	public PlayerLostEvent(MiniGame<?> miniGame, MiniGamePlayer<?> loupGarouPlayer, LoseReason loseReason) 
 	{
 		_miniGame = miniGame;
 		_loupGarouPlayer = loupGarouPlayer;
@@ -26,7 +27,7 @@ public class PlayerLostEvent extends Event
 		return _miniGame;
 	}
 	
-	public CustomPlayer<?> getPlayer()
+	public MiniGamePlayer<?> getPlayer()
 	{
 		return _loupGarouPlayer;
 	}

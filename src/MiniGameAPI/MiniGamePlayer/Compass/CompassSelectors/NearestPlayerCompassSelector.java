@@ -1,9 +1,10 @@
-package MiniGameAPI.CustomPlayer.Compass.CompassSelectors;
+package MiniGameAPI.MiniGamePlayer.Compass.CompassSelectors;
 
 import java.util.ArrayList;
 import org.bukkit.entity.Player;
-import MiniGameAPI.CustomPlayer.Compass.CompassSelector;
-import MiniGameAPI.CustomPlayer.Compass.CompassTarget;
+
+import MiniGameAPI.MiniGamePlayer.Compass.CompassSelector;
+import MiniGameAPI.MiniGamePlayer.Compass.CompassTarget;
 import MiniGameAPI.Utils.LocationUtils;
 
 /**

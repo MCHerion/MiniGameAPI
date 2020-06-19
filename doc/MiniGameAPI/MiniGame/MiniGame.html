@@ -90,7 +90,7 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <main role="main">
 <div class="header">
 <div class="subTitle"><span class="packageLabelInType">Package</span>&nbsp;<a href="package-summary.html">MiniGameAPI.MiniGame</a></div>
-<h1 title="Class MiniGame" class="title">Class MiniGame&lt;P extends <a href="../CustomPlayer/CustomPlayer.html" title="class in MiniGameAPI.CustomPlayer">CustomPlayer</a>&lt;?&gt;&gt;</h1>
+<h1 title="Class MiniGame" class="title">Class MiniGame&lt;P extends <a href="../MiniGamePlayer/MiniGamePlayer.html" title="class in MiniGameAPI.MiniGamePlayer">MiniGamePlayer</a>&lt;?&gt;&gt;</h1>
 </div>
 <div class="contentContainer">
 <div class="inheritance" title="Inheritance Tree">java.lang.Object
@@ -99,14 +99,14 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <section class="description">
 <dl>
 <dt><span class="paramLabel">Type Parameters:</span></dt>
-<dd><code>P</code> - Type of CustomPlayer that'll be used for users.</dd>
+<dd><code>P</code> - Type of MiniGamePlayer that'll be used for users.</dd>
 </dl>
 <dl>
 <dt>All Implemented Interfaces:</dt>
 <dd><code>org.bukkit.event.Listener</code></dd>
 </dl>
 <hr>
-<pre>public abstract class <span class="typeNameLabel">MiniGame&lt;P extends <a href="../CustomPlayer/CustomPlayer.html" title="class in MiniGameAPI.CustomPlayer">CustomPlayer</a>&lt;?&gt;&gt;</span>
+<pre>public abstract class <span class="typeNameLabel">MiniGame&lt;P extends <a href="../MiniGamePlayer/MiniGamePlayer.html" title="class in MiniGameAPI.MiniGamePlayer">MiniGamePlayer</a>&lt;?&gt;&gt;</span>
 extends java.lang.Object
 implements org.bukkit.event.Listener</pre>
 <div class="block">Class that represents a MiniGame</div>
@@ -135,7 +135,7 @@ implements org.bukkit.event.Listener</pre>
 </thead>
 <tbody>
 <tr class="altColor">
-<td class="colFirst"><code>protected <a href="../CustomPlayer/Compass/CompassSelector.html" title="class in MiniGameAPI.CustomPlayer.Compass">CompassSelector</a></code></td>
+<td class="colFirst"><code>protected <a href="../MiniGamePlayer/Compass/CompassSelector.html" title="class in MiniGameAPI.MiniGamePlayer.Compass">CompassSelector</a></code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#_compassSelector">_compassSelector</a></span></code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
@@ -255,7 +255,7 @@ implements org.bukkit.event.Listener</pre>
 <td class="colFirst"><code>abstract <a href="MiniGame.html" title="type parameter in MiniGame">P</a></code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#createPlayer(org.bukkit.entity.Player)">createPlayer</a></span>&#8203;(org.bukkit.entity.Player&nbsp;player)</code></th>
 <td class="colLast">
-<div class="block">Method used to create a CustomPlayer object (P type)</div>
+<div class="block">Method used to create a MiniGamePlayer object (P type)</div>
 </td>
 </tr>
 <tr class="altColor" id="i4">
@@ -309,7 +309,7 @@ java.lang.String&nbsp;subtitle)</code></th>
 <td class="colFirst"><code><a href="MiniGame.html" title="type parameter in MiniGame">P</a></code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getCustomPlayer(org.bukkit.entity.Player)">getCustomPlayer</a></span>&#8203;(org.bukkit.entity.Player&nbsp;player)</code></th>
 <td class="colLast">
-<div class="block">Method used to get a CustomPlayer by a specific Player object</div>
+<div class="block">Method used to get a MiniGamePlayer by a specific Player object</div>
 </td>
 </tr>
 <tr class="altColor" id="i12">
@@ -435,7 +435,7 @@ java.lang.String&nbsp;message)</code></th>
 </tr>
 <tr class="rowColor" id="i29">
 <td class="colFirst"><code>void</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setCompassSelector(MiniGameAPI.CustomPlayer.Compass.CompassSelector)">setCompassSelector</a></span>&#8203;(<a href="../CustomPlayer/Compass/CompassSelector.html" title="class in MiniGameAPI.CustomPlayer.Compass">CompassSelector</a>&nbsp;compassSelector)</code></th>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setCompassSelector(MiniGameAPI.MiniGamePlayer.Compass.CompassSelector)">setCompassSelector</a></span>&#8203;(<a href="../MiniGamePlayer/Compass/CompassSelector.html" title="class in MiniGameAPI.MiniGamePlayer.Compass">CompassSelector</a>&nbsp;compassSelector)</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
 <tr class="altColor" id="i30">
@@ -482,7 +482,7 @@ java.lang.String&nbsp;message)</code></th>
 <li class="blockList">
 <section class="detail">
 <h3><a id="_players">_players</a></h3>
-<div class="memberSignature"><span class="modifiers">protected</span>&nbsp;<span class="returnType">java.util.HashMap&lt;java.lang.String,&#8203;<a href="MiniGame.html" title="type parameter in MiniGame">P</a> extends <a href="../CustomPlayer/CustomPlayer.html" title="class in MiniGameAPI.CustomPlayer">CustomPlayer</a>&lt;?&gt;&gt;</span>&nbsp;<span class="memberName">_players</span></div>
+<div class="memberSignature"><span class="modifiers">protected</span>&nbsp;<span class="returnType">java.util.HashMap&lt;java.lang.String,&#8203;<a href="MiniGame.html" title="type parameter in MiniGame">P</a> extends <a href="../MiniGamePlayer/MiniGamePlayer.html" title="class in MiniGameAPI.MiniGamePlayer">MiniGamePlayer</a>&lt;?&gt;&gt;</span>&nbsp;<span class="memberName">_players</span></div>
 <div class="block">Variable that store CustomPlayers associated by the name of the player that own it</div>
 </section>
 </li>
@@ -510,7 +510,7 @@ java.lang.String&nbsp;message)</code></th>
 <li class="blockList">
 <section class="detail">
 <h3><a id="_compassSelector">_compassSelector</a></h3>
-<div class="memberSignature"><span class="modifiers">protected</span>&nbsp;<span class="returnType"><a href="../CustomPlayer/Compass/CompassSelector.html" title="class in MiniGameAPI.CustomPlayer.Compass">CompassSelector</a></span>&nbsp;<span class="memberName">_compassSelector</span></div>
+<div class="memberSignature"><span class="modifiers">protected</span>&nbsp;<span class="returnType"><a href="../MiniGamePlayer/Compass/CompassSelector.html" title="class in MiniGameAPI.MiniGamePlayer.Compass">CompassSelector</a></span>&nbsp;<span class="memberName">_compassSelector</span></div>
 </section>
 </li>
 </ul>
@@ -565,8 +565,8 @@ java.lang.String&nbsp;message)</code></th>
 </li>
 <li class="blockList">
 <section class="detail">
-<h3><a id="setCompassSelector(MiniGameAPI.CustomPlayer.Compass.CompassSelector)">setCompassSelector</a></h3>
-<div class="memberSignature"><span class="modifiers">public</span>&nbsp;<span class="returnType">void</span>&nbsp;<span class="memberName">setCompassSelector</span>&#8203;(<span class="arguments"><a href="../CustomPlayer/Compass/CompassSelector.html" title="class in MiniGameAPI.CustomPlayer.Compass">CompassSelector</a>&nbsp;compassSelector)</span></div>
+<h3><a id="setCompassSelector(MiniGameAPI.MiniGamePlayer.Compass.CompassSelector)">setCompassSelector</a></h3>
+<div class="memberSignature"><span class="modifiers">public</span>&nbsp;<span class="returnType">void</span>&nbsp;<span class="memberName">setCompassSelector</span>&#8203;(<span class="arguments"><a href="../MiniGamePlayer/Compass/CompassSelector.html" title="class in MiniGameAPI.MiniGamePlayer.Compass">CompassSelector</a>&nbsp;compassSelector)</span></div>
 </section>
 </li>
 <li class="blockList">
@@ -824,12 +824,12 @@ java.lang.String&nbsp;subtitle)</span></div>
 <section class="detail">
 <h3><a id="getCustomPlayer(org.bukkit.entity.Player)">getCustomPlayer</a></h3>
 <div class="memberSignature"><span class="modifiers">public</span>&nbsp;<span class="returnType"><a href="MiniGame.html" title="type parameter in MiniGame">P</a></span>&nbsp;<span class="memberName">getCustomPlayer</span>&#8203;(<span class="arguments">org.bukkit.entity.Player&nbsp;player)</span></div>
-<div class="block">Method used to get a CustomPlayer by a specific Player object</div>
+<div class="block">Method used to get a MiniGamePlayer by a specific Player object</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>player</code> - Player we want to get CustomPlayer of</dd>
+<dd><code>player</code> - Player we want to get MiniGamePlayer of</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>CustomPlayer associated to this Player</dd>
+<dd>MiniGamePlayer associated to this Player</dd>
 </dl>
 </section>
 </li>
@@ -859,12 +859,12 @@ java.lang.String&nbsp;subtitle)</span></div>
 <section class="detail">
 <h3><a id="createPlayer(org.bukkit.entity.Player)">createPlayer</a></h3>
 <div class="memberSignature"><span class="modifiers">public abstract</span>&nbsp;<span class="returnType"><a href="MiniGame.html" title="type parameter in MiniGame">P</a></span>&nbsp;<span class="memberName">createPlayer</span>&#8203;(<span class="arguments">org.bukkit.entity.Player&nbsp;player)</span></div>
-<div class="block">Method used to create a CustomPlayer object (P type)</div>
+<div class="block">Method used to create a MiniGamePlayer object (P type)</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>player</code> - Player we want to create a CustomPlayer for</dd>
+<dd><code>player</code> - Player we want to create a MiniGamePlayer for</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>Created CustomPlayer</dd>
+<dd>Created MiniGamePlayer</dd>
 </dl>
 </section>
 </li>
