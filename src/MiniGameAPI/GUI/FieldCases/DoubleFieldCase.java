@@ -15,9 +15,9 @@ import net.md_5.bungee.api.ChatColor;
 
 public class DoubleFieldCase extends FieldCase
 {
-	public DoubleFieldCase(GameFlagBuilder pere, MiniGamePlayer<?> MiniGamePlayer, Field field, GameFlagInfos gameFlagInfos) 
+	public DoubleFieldCase(GameFlagBuilder pere, MiniGamePlayer<?> MiniGamePlayer, Field field, FieldInfos fieldInfos) 
 	{
-		super(pere, MiniGamePlayer, field, Material.GOLD_INGOT, gameFlagInfos);
+		super(pere, MiniGamePlayer, field, Material.GOLD_INGOT, fieldInfos);
 		_player.sendMessage(ChatColor.YELLOW + "Veuillez saisir un nombre");
 	}
 

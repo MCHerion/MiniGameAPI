@@ -13,9 +13,9 @@ import net.md_5.bungee.api.ChatColor;
 
 public class StringFieldCase extends FieldCase
 {
-	public StringFieldCase(GameFlagBuilder pere, MiniGamePlayer<?> MiniGamePlayer, Field field, GameFlagInfos gameFlagInfos) 
+	public StringFieldCase(GameFlagBuilder pere, MiniGamePlayer<?> MiniGamePlayer, Field field, FieldInfos fieldInfos) 
 	{
-		super(pere, MiniGamePlayer, field, Material.STRING, gameFlagInfos);
+		super(pere, MiniGamePlayer, field, Material.STRING, fieldInfos);
 		_player.sendMessage(ChatColor.YELLOW + "Veuillez saisir du texte");
 	}
 

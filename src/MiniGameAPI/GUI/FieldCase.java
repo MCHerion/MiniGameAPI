@@ -10,6 +10,7 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import MiniGameAPI.GUI.FieldCases.FieldInfos;
 import MiniGameAPI.MiniGame.GameFlags.GameFlagInfos;
 import MiniGameAPI.MiniGamePlayer.MiniGamePlayer;
 import PluginUtils.GUI.Case;
@@ -24,15 +25,15 @@ public abstract class FieldCase extends Case
 	protected Field _field;
 	protected Object _object;
 	
-	public FieldCase(GameFlagBuilder pere, MiniGamePlayer<?> MiniGamePlayer, Field field, Material icone, GameFlagInfos gameFlagInfos)
+	public FieldCase(GameFlagBuilder pere, MiniGamePlayer<?> MiniGamePlayer, Field field, Material icone, FieldInfos fieldInfos)
 	{
 		super
 		(
 			pere, 
 			MiniGamePlayer.getPlayer(),
 			new ItemStackBuilder(icone)
-			.setName(gameFlagInfos.name())
-			.addLores(gameFlagInfos.description())
+			.setName(fieldInfos.name())
+			.addLores(fieldInfos.description())
 			.build(), 
 			new OnClickHandler()
 			{

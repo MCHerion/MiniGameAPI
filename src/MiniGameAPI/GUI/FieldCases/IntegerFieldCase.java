@@ -13,9 +13,9 @@ import net.md_5.bungee.api.ChatColor;
 
 public class IntegerFieldCase extends FieldCase
 {
-	public IntegerFieldCase(GameFlagBuilder pere, MiniGamePlayer<?> MiniGamePlayer, Field field, GameFlagInfos gameFlagInfos) 
+	public IntegerFieldCase(GameFlagBuilder pere, MiniGamePlayer<?> MiniGamePlayer, Field field, FieldInfos fieldInfos) 
 	{
-		super(pere, MiniGamePlayer, field, Material.IRON_INGOT, gameFlagInfos);
+		super(pere, MiniGamePlayer, field, Material.IRON_INGOT, fieldInfos);
 		_player.sendMessage(ChatColor.YELLOW + "Veuillez saisir un nombre entier");
 	}
 	

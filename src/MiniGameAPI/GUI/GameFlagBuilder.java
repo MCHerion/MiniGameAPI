@@ -10,6 +10,7 @@ import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
 import MiniGameAPI.GUI.FieldCases.DoubleFieldCase;
+import MiniGameAPI.GUI.FieldCases.FieldInfos;
 import MiniGameAPI.GUI.FieldCases.IntegerFieldCase;
 import MiniGameAPI.GUI.FieldCases.StringFieldCase;
 import MiniGameAPI.MiniGame.GameFlag;
@@ -62,9 +63,9 @@ public class GameFlagBuilder extends Categorie
 		for(Field field : fields)
 		{
 			field.setAccessible(true);
-			if(field.isAnnotationPresent(GameFlagInfos.class))
+			if(field.isAnnotationPresent(FieldInfos.class))
 			{
-				GameFlagInfos gameFlagInfos = field.getAnnotation(GameFlagInfos.class);
+				FieldInfos fieldInfos = field.getAnnotation(FieldInfos.class);
 				if(field.getType() == Integer.class || field.getType() == int.class)
 				{
 					setIconeAtSlot
@@ -74,7 +75,7 @@ public class GameFlagBuilder extends Categorie
 							this, 
 							_customPlayer,
 							field,
-							gameFlagInfos
+							fieldInfos
 						), 
 						index
 					);	
@@ -88,7 +89,7 @@ public class GameFlagBuilder extends Categorie
 							this, 
 							_customPlayer,
 							field,
-							gameFlagInfos
+							fieldInfos
 						), 
 						index
 					);	
@@ -102,7 +103,7 @@ public class GameFlagBuilder extends Categorie
 							this, 
 							_customPlayer,
 							field,
-							gameFlagInfos
+							fieldInfos
 						), 
 						index
 					);	

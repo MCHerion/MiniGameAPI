@@ -11,23 +11,23 @@ import net.md_5.bungee.api.ChatColor;
 public class Team implements MiniGameHandler<MiniGame<?>>
 {
 	protected MiniGame<?> _miniGame;
-	protected TeamColor _teamColor;
+	protected TeamTemplate _teamTemplate;
 	protected HashMap<MiniGamePlayer<?>, Boolean> _players = new HashMap<MiniGamePlayer<?>, Boolean>();
 	
-	public Team(MiniGame<?> miniGame, TeamColor teamColor)
+	public Team(MiniGame<?> miniGame, TeamTemplate teamTemplate)
 	{
 		_miniGame = miniGame;
-		_teamColor = teamColor;
+		_teamTemplate = teamTemplate;
 	}
 	
 	public String getTag()
 	{
-		return ChatColor.GRAY + "[" + _teamColor.getName() + ChatColor.GRAY + "]";
+		return ChatColor.GRAY + "[" + _teamTemplate.getName() + ChatColor.GRAY + "]";
 	}
 	
-	public TeamColor getTeamColor()
+	public TeamTemplate getTeamColor()
 	{
-		return _teamColor;
+		return _teamTemplate;
 	}
 	
 	public void addPlayer(MiniGamePlayer<?> player)

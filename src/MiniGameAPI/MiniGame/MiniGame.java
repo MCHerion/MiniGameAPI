@@ -1,21 +1,25 @@
 package MiniGameAPI.MiniGame;
 
+import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
+import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.WorldBorder;
+import org.bukkit.WorldCreator;
+import org.bukkit.WorldType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import MiniGameAPI.MainClass;
 import MiniGameAPI.CustomEvents.GameStateChangedEvent;
+import MiniGameAPI.CustomEvents.MiniGameStartedEvent;
 import MiniGameAPI.CustomEvents.PlayerJoinMiniGameEvent;
 import MiniGameAPI.CustomEvents.PlayerLosingEvent;
 import MiniGameAPI.CustomEvents.PlayerLostEvent;
@@ -25,8 +29,11 @@ import MiniGameAPI.MiniGame.Reasons.LoseReasons.LeftGameLoseReason;
 import MiniGameAPI.MiniGamePlayer.MiniGamePlayer;
 import MiniGameAPI.MiniGamePlayer.Compass.CompassSelector;
 import PluginUtils.CustomItems.CustomItem;
+import PluginUtils.CustomItems.CustomItemHandler;
 import PluginUtils.CustomItems.CustomItemManager;
+import PluginUtils.Utils.Range;
 import PluginUtils.Utils.Titles;
+import net.md_5.bungee.api.ChatColor;
 
 /**
  * 
@@ -36,12 +43,12 @@ import PluginUtils.Utils.Titles;
  *
  * @param <P> Type of MiniGamePlayer that'll be used for users.
  */
-public abstract class MiniGame<P extends MiniGamePlayer<?>> implements Listener
+public abstract class MiniGame<P extends MiniGamePlayer<?>> implements Listener, WorldBorderHandler
 {
 	/**
-	 * Variable that store the World owned by this MiniGame
+	 * Variable that store the MiniGameMap of this MiniGame
 	 */
-	protected World _world;
+	protected MiniGameMap _miniGameMap;
 	/**
 	 * Variable that store the actual GameState of this MiniGame
 	 */
@@ -58,6 +65,9 @@ public abstract class MiniGame<P extends MiniGamePlayer<?>> implements Listener
 	 * Variable that store all spectators
 	 */
 	protected ArrayList<Player> _spectators = new ArrayList<Player>();
+	/**
+	 * Variable that store every GameFlag that can get added by players or host 
+	 */
 	@SuppressWarnings("rawtypes")
 	protected ArrayList<Class<? extends GameFlag>> _addableGameFlags = new ArrayList<Class<? extends GameFlag>>();
 	/**
@@ -90,6 +100,16 @@ public abstract class MiniGame<P extends MiniGamePlayer<?>> implements Listener
 	 * Variable used to store every default items that every players must have all the time in their inventory
 	 */
 	protected ArrayList<CustomItem> _defaultItems = new ArrayList<CustomItem>();
+	/**
+	 * Variable used to store the way this MiniGame will be managed (by users or by one or some hosts that has {@link MiniGamePlayer#getAdminMode()}
+	 */
+	protected CreatorMode _creatorMode;
+	/**
+	 * Variable used to store GameFlags users want to add
+	 */
+	@SuppressWarnings("rawtypes")
+	protected RequestManager<Class<? extends GameFlag>> _gameFlagRequestManager;
+	protected boolean _useWorldBorder = false;
 	
 	/**
 	 * Constructor of the MiniGame
@@ -97,14 +117,36 @@ public abstract class MiniGame<P extends MiniGamePlayer<?>> implements Listener
 	 * @param world World that'll be owned by this MiniGame
 	 * @param gameState Starting GameState of this MiniGame
 	 */
-	public MiniGame(World world, GameState<?> gameState, int maxPlayers)
+	@SuppressWarnings("rawtypes")
+	public MiniGame(MiniGameMap miniGameMap, GameState<?> gameState, int maxPlayers, CreatorMode creatorMode)
 	{
-		_world = world;
+		_miniGameMap = miniGameMap;
 		resetWorldBorder();
-		generateWorld(_world);
-		_gameState = gameState;
+		changeGameState(gameState);
 		_maxPlayers = maxPlayers;
+		_creatorMode = creatorMode;
 		_teamManager = new TeamManager(this);
+		_gameFlagRequestManager = new RequestManager<Class<? extends GameFlag>>()
+		{
+			@Override
+			public ArrayList<Player> getInvolvedPlayers() 
+			{
+				return getPlayers();
+			}
+
+			@Override
+			public void onAccept(Class<? extends GameFlag> request) 
+			{
+				try 
+				{
+					addGameFlag(request.getConstructor(MiniGame.class).newInstance(this));
+				} 
+				catch (Exception e) 
+				{
+					e.printStackTrace();
+				}
+			}
+		};
 		// Registering events
 		Bukkit.getPluginManager().registerEvents(this, MainClass.getInstance());
 	}
@@ -132,6 +174,45 @@ public abstract class MiniGame<P extends MiniGamePlayer<?>> implements Listener
 	}
 	
 	/**
+	 * Method used to get requests of Players that'll be used to know which GameFlag we are going to add if {@link #getCreatorMode()} is {@link CreatorMode#PARTIE_A_LA_DEMANDE}
+	 *
+	 * @return GameFlag requests manager of this MiniGame
+	 */
+	@SuppressWarnings("rawtypes")
+	public RequestManager<Class<? extends GameFlag>> getGameFlagRequestManager()
+	{
+		return _gameFlagRequestManager;
+	}
+	
+	@Override
+	public WorldBorder getWorldBorder() 
+	{
+		return getWorld().getWorldBorder();
+	}
+
+	@Override
+	public boolean hasWorldBorder() 
+	{
+		return _useWorldBorder;
+	}
+
+	@Override
+	public void setHasWorldBorder(boolean hasWorldBorder) 
+	{	
+		_useWorldBorder = hasWorldBorder;
+	}
+	
+	/**
+	 * Method used to get the CreatorMode of this MiniGame
+	 * 
+	 * @return CreatorMode of this MiniGame
+	 */
+	public CreatorMode getCreatorMode()
+	{
+		return _creatorMode;
+	}
+	
+	/**
 	 * Method used to add default items that every players must have all the time in their inventory
 	 * 
 	 * @param items Array of registered CustomItems names
@@ -154,25 +235,26 @@ public abstract class MiniGame<P extends MiniGamePlayer<?>> implements Listener
 		return _defaultItems;
 	}
 	
-	/**
-	 * Method used to get the WorldBorder of the World owned by this MiniGame
-	 * 
-	 * @return WorldBorder of the World owned by this MiniGame
-	 */
-	public WorldBorder getWorldBorder()
+	public void giveItemToAllPlayers(CustomItemHandler customItemHandler)
 	{
-		return getWorld().getWorldBorder();
+		for(Player player : getPlayers())
+		{
+			player.getInventory().addItem(customItemHandler.getCustomItem().getItem());
+		}
 	}
 	
-	/**
-	 * Method used to reset the WorldBorder of the World owned by this MiniGame
-	 * 
-	 * @see {@link #getWorldBorder()}
-	 * @see {@link WorldBorder#reset()}
-	 */
-	public void resetWorldBorder()
+	public void removeItemToAllPlayers(CustomItemHandler customItemHandler)
 	{
-		getWorldBorder().reset();
+		for(Player player : getPlayers())
+		{
+			for(ItemStack item : player.getInventory().all(customItemHandler.getCustomItem().getType()).values())
+			{
+				if(customItemHandler.getCustomItem().instanceOfThisItem(item))
+				{
+					player.getInventory().remove(item);
+				}
+			}
+		}
 	}
 	
 	/**
@@ -243,6 +325,11 @@ public abstract class MiniGame<P extends MiniGamePlayer<?>> implements Listener
 			}
 		}
 		return returnValue;
+	}
+	
+	public ArrayList<GameFlag<?>> getGameFlags()
+	{
+		return _gameFlags;
 	}
 	
 	/**
@@ -384,7 +471,7 @@ public abstract class MiniGame<P extends MiniGamePlayer<?>> implements Listener
 	 */
 	public World getWorld()
 	{
-		return _world;
+		return _miniGameMap.getWorld();
 	}
 	
 	/**
@@ -422,12 +509,25 @@ public abstract class MiniGame<P extends MiniGamePlayer<?>> implements Listener
 		Bukkit.getPluginManager().callEvent(new GameStateChangedEvent(this, _gameState, lastGameState));
 	}
 	
+	/**
+	 * Method used to add a specific GameFlag class as an addable GameFlag in this MiniGame
+	 * 
+	 * @param gameFlags GameFlag class that we will be able to add
+	 */
 	@SuppressWarnings("rawtypes")
 	public void registerAddableGameFlags(Class<? extends GameFlag> gameFlags)
 	{
 		_addableGameFlags.add(gameFlags);
 	}
 	
+	/**
+	 * Method used to get all flags that players will be able to add to this MiniGame
+	 * If a player has {@link MiniGamePlayer#getAdminMode()} true, he'll be able to adjust addable GameFlag's parameters as he want
+	 * Else if there is no player with {@link MiniGamePlayer#getAdminMode()} true, players will be able to vote for a GameFlag but they wont be able to
+	 * adjust parameters.
+	 * 
+	 * @return Addable GameFlags of this MiniGame
+	 */
 	@SuppressWarnings("rawtypes")
 	public ArrayList<Class<? extends GameFlag>> getAddableGameFlags()
 	{
@@ -493,13 +593,13 @@ public abstract class MiniGame<P extends MiniGamePlayer<?>> implements Listener
 	{
 		if(getPlayers().contains(player))
 		{
-			PlayerLosingEvent event = new PlayerLosingEvent(this, getCustomPlayer(player), loseReason);
+			PlayerLosingEvent event = new PlayerLosingEvent(this, getMiniGamePlayer(player), loseReason);
 			Bukkit.getPluginManager().callEvent(event);
 			if(!event.isCancelled())
 			{
 				removePlayer(player.getPlayer());
 				joinAsSpectator(player.getPlayer());
-				Bukkit.getPluginManager().callEvent(new PlayerLostEvent(this, getCustomPlayer(player), loseReason));
+				Bukkit.getPluginManager().callEvent(new PlayerLostEvent(this, getMiniGamePlayer(player), loseReason));
 			}
 		}
 	}
@@ -533,7 +633,7 @@ public abstract class MiniGame<P extends MiniGamePlayer<?>> implements Listener
 			_players.put(player.getName(), MiniGamePlayer);
 			// Adding this player as a player that played to this MiniGame
 			_playedPlayers.add(player.getName());
-			player.teleport(_world.getSpawnLocation());
+			player.teleport(getWorld().getSpawnLocation());
 			player.setGameMode(_gameMode);
 			MiniGamePlayer.clearInventory();
 			MiniGamePlayer.getCompassManager().setCompassSelector(_compassSelector);
@@ -552,6 +652,16 @@ public abstract class MiniGame<P extends MiniGamePlayer<?>> implements Listener
 		{
 			sendMessage(player, "Impossible de rejoindre ce MiniJeu car il est complet");
 		}
+	}
+	
+	/**
+	 * Method used to get a random player in this MiniGame
+	 * 
+	 * @return A random player
+	 */
+	public MiniGamePlayer<?> getRandomPlayer()
+	{
+		return getMiniGamePlayers().get(new Range(0, getMiniGamePlayers().size()).getRandomIntValue());
 	}
 	
 	/**
@@ -597,10 +707,22 @@ public abstract class MiniGame<P extends MiniGamePlayer<?>> implements Listener
 	 * 
 	 * @param player Player we want to get MiniGamePlayer of
 	 * @return MiniGamePlayer associated to this Player
+	 * @see {@link #getMiniGamePlayer(String)}
 	 */
-	public P getCustomPlayer(Player player)
+	public P getMiniGamePlayer(Player player)
 	{
-		return _players.get(player.getName());
+		return getMiniGamePlayer(player.getName());
+	}
+	
+	/**
+	 * Method used to get a MiniGamePlayer by a specific Player name
+	 * 
+	 * @param player Player we want to get MiniGamePlayer of
+	 * @return MiniGamePlayer associated to this Player
+	 */
+	public P getMiniGamePlayer(String name)
+	{
+		return _players.get(name);
 	}
 	
 	/**
@@ -677,9 +799,57 @@ public abstract class MiniGame<P extends MiniGamePlayer<?>> implements Listener
 	 */
 	public abstract P createPlayer(Player player);
 	
-	public void generateWorld(World world)
+	public abstract Location getStartLocation(int index);
+	
+	public void start()
 	{
-		
+		if(shouldRegenerateWorld())
+		{
+			generateWorld();
+		}
+		boolean sent = false;
+		for(GameFlag<?> gameFlag : getGameFlags())
+		{
+			if(!sent)
+			{
+				dispatchMessage(ChatColor.AQUA + "La partie se jouera avec les règles suivantes :");
+				sent = true;
+			}
+			dispatchMessage(ChatColor.DARK_AQUA + "- " + gameFlag.getName());
+		}
+		for(int i=0; i<getPlayers().size(); ++i)
+		{
+			getPlayers().get(i).teleport(getStartLocation(i));
+		}
+		Bukkit.getPluginManager().callEvent(new MiniGameStartedEvent(this));
+		dispatchTitle(ChatColor.GOLD + "Début de la partie !");
+	}
+	
+	public boolean shouldRegenerateWorld()
+	{
+		return false;
+	}
+	
+	public void generateWorld()
+	{	
+		Bukkit.getServer().unloadWorld(getWorld(), true);
+		File path = getWorld().getWorldFolder();
+		deleteDirectory(path);
+		WorldCreator worldCreator = new WorldCreator(_miniGameMap.getMapName());
+		worldCreator.type(WorldType.NORMAL);
+		worldCreator.createWorld();
+	}
+	
+	public void deleteDirectory(File directory)
+	{
+	    File[] files = directory.listFiles();
+	    if (files != null) {
+	        for (File file : files)
+	        {
+	            deleteDirectory(file);
+	        }
+	    }
+	    directory.delete();
 	}
 	
 	/**

@@ -1,5 +1,11 @@
 package MiniGameAPI.MiniGame;
 
+/**
+ * Enum used to get how players will have a team
+ * 
+ * @author Elytes
+ *
+ */
 public enum TeamSelector 
 {
 	/**

@@ -45,7 +45,7 @@ public class AntiPVPGameFlag<MG extends MiniGame<?>> extends GameFlag<MG>
 				}
 				if(damager != null)
 				{
-					if(check(_miniGame.getCustomPlayer(damager), _miniGame.getCustomPlayer(damaged)))
+					if(check(_miniGame.getMiniGamePlayer(damager), _miniGame.getMiniGamePlayer(damaged)))
 					{
 						event.setCancelled(true);
 					}

@@ -1,5 +1,12 @@
 package MiniGameAPI.MiniGame;
 
+/**
+ * Interface that is used to make an object handle a MiniGame
+ * 
+ * @author Elytes
+ *
+ * @param <MG> Generic MiniGame type 
+ */
 public interface MiniGameHandler<MG extends MiniGame<?>>
 {
 	/**

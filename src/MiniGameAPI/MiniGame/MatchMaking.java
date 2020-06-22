@@ -80,6 +80,11 @@ public abstract class MatchMaking<MG extends MiniGame<?>>
 	
 	public abstract MG createMiniGame(MiniGameMap mapName);
 	
+	public ArrayList<CreatorMode> getCreatorModes()
+	{
+		return _creatorModes;
+	}
+	
 	public void removeCreatorMode(CreatorMode creatorMode)
 	{
 		_creatorModes.remove(creatorMode);

@@ -1,9 +1,12 @@
 package MiniGameAPI.MiniGamePlayer;
 
+import java.util.HashMap;
+
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
+import org.bukkit.potion.PotionEffect;
 
 import MiniGameAPI.MainClass;
 import MiniGameAPI.MiniGame.MiniGame;
@@ -13,6 +16,8 @@ import MiniGameAPI.MiniGame.GameFlags.Teams.UnknownTeammatesGameFlag;
 import MiniGameAPI.MiniGamePlayer.Compass.CompassManager;
 import PluginUtils.CustomItems.CustomItem;
 import PluginUtils.GUI.GUI;
+import PluginUtils.ScoreBoard.BasicScoreBoard;
+import PluginUtils.ScoreBoard.ScoreBoardManager;
 
 /**
  * Class that represents a MiniGamePlayer where data will be stored for a specific player
@@ -23,6 +28,8 @@ import PluginUtils.GUI.GUI;
  */
 public abstract class MiniGamePlayer<MG extends MiniGame<?>> implements MiniGameHandler<MG>, Listener
 {
+	protected static HashMap<String, MiniGamePlayer<?>> _miniGamePlayers = new HashMap<String, MiniGamePlayer<?>>();
+	
 	/**
 	 * Variable that store the name of this Player
 	 */
@@ -42,14 +49,30 @@ public abstract class MiniGamePlayer<MG extends MiniGame<?>> implements MiniGame
 	protected GUI _gui;
 	protected boolean _adminMode = false;
 	protected String _displayName;
+	protected ScoreBoardManager _scoreBoardManager;
 	
 	public MiniGamePlayer(MG miniGame, String name)
 	{
 		_name = name;
+		_miniGamePlayers.put(_name, this);
 		setDisplayName(_name);
 		_miniGame = miniGame;
 		_compassManager = new CompassManager(getPlayer());
+		_scoreBoardManager = new ScoreBoardManager(getPlayer(), createBasicScoreBoard());
+		resetStats();
 		Bukkit.getPluginManager().registerEvents(this, MainClass.getInstance());
+	}
+	
+	public abstract BasicScoreBoard createBasicScoreBoard();
+	
+	public static MiniGamePlayer<?> getMiniGamePlayer(Player player)
+	{
+		return getMiniGamePlayer(player.getName());
+	}
+	
+	public static MiniGamePlayer<?> getMiniGamePlayer(String name)
+	{
+		return _miniGamePlayers.get(name);
 	}
 	
 	public void setDisplayName(String displayName)
@@ -83,6 +106,19 @@ public abstract class MiniGamePlayer<MG extends MiniGame<?>> implements MiniGame
 		}
 		return _gui;
 	}
+	
+    public void resetStats()
+    {
+    	getPlayer().setHealth(20);
+        getPlayer().setFoodLevel(20);
+        getPlayer().setTotalExperience(0);
+        getPlayer().setExp(0);
+        getPlayer().setFlying(false);
+        for (PotionEffect effect : getPlayer().getActivePotionEffects())
+        {
+            getPlayer().removePotionEffect(effect.getType());
+        }
+    }
 	
 	public void clearInventory()
 	{
@@ -172,5 +208,6 @@ public abstract class MiniGamePlayer<MG extends MiniGame<?>> implements MiniGame
 		HandlerList.unregisterAll(this);
 		_team.removePlayer(this);
 		_miniGame = null;
+		_miniGamePlayers.put(_name, null);
 	}
 }
