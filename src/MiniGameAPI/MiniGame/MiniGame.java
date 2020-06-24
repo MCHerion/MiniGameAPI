@@ -90,12 +90,6 @@ public abstract class MiniGame<P extends MiniGamePlayer<?>> implements Listener,
 	 */
 	protected CompassSelector _compassSelector;
 	/**
-	 * Variable that store the maximum players in this MiniGame
-	 * If TeamMode is {@link TeamSelector#NO_TEAM}, this number will result to max players for this whole MiniGame
-	 * Else if TeamMode is {@link TeamSelector#FORCED} or {@link TeamSelector#CHOICE}, this number will result to max players per team
-	 */
-	protected int _maxPlayers;
-	/**
 	 * Variable used to store every default items that every players must have all the time in their inventory
 	 */
 	protected ArrayList<CustomItemHandler> _defaultItems = new ArrayList<CustomItemHandler>();
@@ -117,14 +111,14 @@ public abstract class MiniGame<P extends MiniGamePlayer<?>> implements Listener,
 	 * @param gameState Starting GameState of this MiniGame
 	 */
 	@SuppressWarnings("rawtypes")
-	public MiniGame(MiniGameMap miniGameMap, GameState<?> gameState, int maxPlayers, CreatorMode creatorMode)
+	public MiniGame(MiniGameMap miniGameMap, GameState<?> gameState, CreatorMode creatorMode)
 	{
 		_miniGameMap = miniGameMap;
 		resetWorldBorder();
 		changeGameState(gameState);
-		_maxPlayers = maxPlayers;
 		_creatorMode = creatorMode;
 		_teamManager = new TeamManager(this);
+		_teamManager.createTeams(getTeamAmount());
 		_gameFlagRequestManager = new RequestManager<Class<? extends GameFlag>>()
 		{
 			@Override
@@ -755,8 +749,12 @@ public abstract class MiniGame<P extends MiniGamePlayer<?>> implements Listener,
 		return getPlayedPlayers().size();
 	}
 	
+	public abstract int getTeamAmount();
+	
 	/**
 	 * Method used to get max amount players of this MiniGame
+	 * If TeamMode is {@link TeamSelector#NO_TEAM}, this number will result to max players for this whole MiniGame
+	 * Else if TeamMode is {@link TeamSelector#FORCED} or {@link TeamSelector#CHOICE}, this number will result to max players per team
 	 * 
 	 * @return Max players of this MiniGame
 	 */
@@ -764,17 +762,19 @@ public abstract class MiniGame<P extends MiniGamePlayer<?>> implements Listener,
 	{
 		if(_teamSelector == TeamSelector.NO_TEAM)
 		{
-			return _maxPlayers;
+			return getMaxPlayersAmount();
 		}
 		else if(_teamSelector == TeamSelector.CHOICE || _teamSelector == TeamSelector.FORCED)
 		{
-			return _teamManager.getTeams().size() * _maxPlayers;
+			return _teamManager.getTeams().size() * getMaxPlayersAmount();
 		}
 		else
 		{
-			return _maxPlayers;
+			return getMaxPlayersAmount();
 		}
 	}
+	
+	public abstract int getMaxPlayersAmount();
 	
 	/**
 	 * Method used to get minimum amount of players to start this MiniGame
