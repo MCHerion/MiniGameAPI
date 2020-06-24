@@ -3,6 +3,7 @@ package MiniGameAPI.MiniGame;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
+
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -15,8 +16,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
+
 import MiniGameAPI.MainClass;
 import MiniGameAPI.CustomEvents.GameStateChangedEvent;
 import MiniGameAPI.CustomEvents.MiniGameStartedEvent;
@@ -28,9 +29,7 @@ import MiniGameAPI.MiniGame.Reasons.WinReason;
 import MiniGameAPI.MiniGame.Reasons.LoseReasons.LeftGameLoseReason;
 import MiniGameAPI.MiniGamePlayer.MiniGamePlayer;
 import MiniGameAPI.MiniGamePlayer.Compass.CompassSelector;
-import PluginUtils.CustomItems.CustomItem;
 import PluginUtils.CustomItems.CustomItemHandler;
-import PluginUtils.CustomItems.CustomItemManager;
 import PluginUtils.Utils.Range;
 import PluginUtils.Utils.Titles;
 import net.md_5.bungee.api.ChatColor;
@@ -99,7 +98,7 @@ public abstract class MiniGame<P extends MiniGamePlayer<?>> implements Listener,
 	/**
 	 * Variable used to store every default items that every players must have all the time in their inventory
 	 */
-	protected ArrayList<CustomItem> _defaultItems = new ArrayList<CustomItem>();
+	protected ArrayList<CustomItemHandler> _defaultItems = new ArrayList<CustomItemHandler>();
 	/**
 	 * Variable used to store the way this MiniGame will be managed (by users or by one or some hosts that has {@link MiniGamePlayer#getAdminMode()}
 	 */
@@ -217,11 +216,11 @@ public abstract class MiniGame<P extends MiniGamePlayer<?>> implements Listener,
 	 * 
 	 * @param items Array of registered CustomItems names
 	 */
-	public void addDefaultItems(String... items)
+	public void addDefaultItems(CustomItemHandler... items)
 	{
-		for(String item : items)
+		for(CustomItemHandler item : items)
 		{
-			_defaultItems.add(CustomItemManager.getInstance().getItem(item));
+			_defaultItems.add(item);
 		}
 	}
 	
@@ -230,30 +229,24 @@ public abstract class MiniGame<P extends MiniGamePlayer<?>> implements Listener,
 	 *  
 	 * @return Every default items
 	 */
-	public ArrayList<CustomItem> getDefaultItems()
+	public ArrayList<CustomItemHandler> getDefaultItems()
 	{
 		return _defaultItems;
 	}
 	
-	public void giveItemToAllPlayers(CustomItemHandler customItemHandler)
+	public void giveCustomItem(CustomItemHandler customItemHandler)
 	{
-		for(Player player : getPlayers())
+		for(MiniGamePlayer<?> miniGamePlayer : getMiniGamePlayers())
 		{
-			player.getInventory().addItem(customItemHandler.getCustomItem().getItem());
+			miniGamePlayer.giveCustomItem(customItemHandler);
 		}
 	}
 	
-	public void removeItemToAllPlayers(CustomItemHandler customItemHandler)
+	public void removeCustomItem(CustomItemHandler customItemHandler)
 	{
-		for(Player player : getPlayers())
+		for(MiniGamePlayer<?> miniGamePlayer : getMiniGamePlayers())
 		{
-			for(ItemStack item : player.getInventory().all(customItemHandler.getCustomItem().getType()).values())
-			{
-				if(customItemHandler.getCustomItem().instanceOfThisItem(item))
-				{
-					player.getInventory().remove(item);
-				}
-			}
+			miniGamePlayer.removeCustomItem(customItemHandler);
 		}
 	}
 	
@@ -503,6 +496,7 @@ public abstract class MiniGame<P extends MiniGamePlayer<?>> implements Listener,
 		}
 		// Defining the new GameState
 		_gameState = gameState;
+		_gameState.setMiniGame(this);
 		// Activating the new GameState
 		_gameState.activate();
 		// Calling GameStateChangedEvent
@@ -532,6 +526,12 @@ public abstract class MiniGame<P extends MiniGamePlayer<?>> implements Listener,
 	public ArrayList<Class<? extends GameFlag>> getAddableGameFlags()
 	{
 		return _addableGameFlags;
+	}
+	
+	@SuppressWarnings("rawtypes")
+	public boolean hasAddableGameFlag(Class<? extends GameFlag> gameFlag)
+	{
+		return getAddableGameFlags().contains(gameFlag);
 	}
 	
 	/**

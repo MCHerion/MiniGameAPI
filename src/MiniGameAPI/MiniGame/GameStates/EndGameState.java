@@ -8,9 +8,9 @@ import MiniGameAPI.MiniGame.MiniGame;
 
 public class EndGameState<MG extends MiniGame<?>> extends GameState<MG>
 {
-	public EndGameState(MG miniGame)
+	public EndGameState()
 	{
-		super(miniGame, "Fin");
+		super("Fin");
 	}
 	
 	@Override

@@ -11,6 +11,8 @@ import MiniGameAPI.MiniGamePlayer.MiniGamePlayer;
 
 public abstract class MatchMaking<MG extends MiniGame<?>>
 {
+	protected static MatchMaking<?> _instance;
+	
 	protected ArrayList<CreatorMode> _creatorModes = new ArrayList<CreatorMode>();
 	protected HashMap<String, MG> _miniGames = new HashMap<String, MG>();
 	protected String _mapsPath;
@@ -42,11 +44,27 @@ public abstract class MatchMaking<MG extends MiniGame<?>>
 		}
 	}
 	
-	public void createGame(MiniGamePlayer<?> player)
+	public boolean mapExists(String mapName)
+	{
+		return _miniGames.containsKey(mapName);
+	}
+	
+	public boolean mapUsed(String mapName)
+	{
+		return _miniGames.get(mapName) != null;
+	}
+	
+	public void createHostGame(Player player, String mapName)
 	{
 		if(hasCreatorMode(CreatorMode.HOST))
 		{
-			// Create MiniGame and set this player as admin of this MiniGame
+			if(mapExists(mapName) && !mapUsed(mapName))
+			{
+				MG miniGame = createMiniGame((MiniGameMap) YamlConfiguration.loadConfiguration(new File(_mapsPath + mapName)).get("MiniGameMap"), CreatorMode.HOST);
+				_miniGames.put(mapName, miniGame);
+				miniGame.joinAsPlayer(player);
+				MiniGamePlayer.getMiniGamePlayer(player).setAdminMode(true);
+			}
 		}
 	}
 	
@@ -65,7 +83,7 @@ public abstract class MatchMaking<MG extends MiniGame<?>>
 				}
 				else if(miniGame == null)
 				{
-					returnValue = createMiniGame((MiniGameMap) YamlConfiguration.loadConfiguration(new File(_mapsPath + mapName)).get("MiniGameMap"));
+					returnValue = createMiniGame((MiniGameMap) YamlConfiguration.loadConfiguration(new File(_mapsPath + mapName)).get("MiniGameMap"), CreatorMode.PARTIE_A_LA_DEMANDE);
 					_miniGames.put(mapName, returnValue);
 					break;
 				}
@@ -78,7 +96,7 @@ public abstract class MatchMaking<MG extends MiniGame<?>>
 		}
 	}
 	
-	public abstract MG createMiniGame(MiniGameMap mapName);
+	public abstract MG createMiniGame(MiniGameMap mapName, CreatorMode creatorMode);
 	
 	public ArrayList<CreatorMode> getCreatorModes()
 	{
@@ -93,5 +111,10 @@ public abstract class MatchMaking<MG extends MiniGame<?>>
 	public boolean hasCreatorMode(CreatorMode creatorMode)
 	{
 		return _creatorModes.contains(creatorMode);
+	}
+	
+	public static MatchMaking<?> getInstance()
+	{
+		return _instance;
 	}
 }

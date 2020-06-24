@@ -33,22 +33,70 @@ public class GameFlagSelector extends Categorie
 		for(Class<? extends GameFlag> gameFlagType : _customPlayer.getMiniGame().getAddableGameFlags())
 		{
 			GameFlagInfos gameFlagInfos = gameFlagType.getAnnotation(GameFlagInfos.class);
+			MiniGame<?> miniGame = _customPlayer.getMiniGame();
 			if(_customPlayer.getMiniGame().getCreatorMode() == CreatorMode.HOST && _customPlayer.getAdminMode())
 			{
-				setIconeAtSlot
-				(
-					new GameFlagBuilder
+				if(miniGame.hasGameFlag(gameFlagType))
+				{
+					setIconeAtSlot
 					(
-						this, 
-						_customPlayer,
-						new ItemStackBuilder(Material.PAPER) 
-						.setName(ChatColor.YELLOW + gameFlagInfos.name())
-						.addLores(gameFlagInfos.description())
-						.build(),
-						gameFlagType
-					), 
-					index
-				);	
+						new ObjectBuilder
+						(
+							this, 
+							_customPlayer,
+							new ItemStackBuilder(Material.PAPER) 
+							.setName(ChatColor.YELLOW + gameFlagInfos.name())
+							.addLores(gameFlagInfos.description())
+							.build(),
+							miniGame.getGameFlag(gameFlagType)
+						)
+						{
+							@Override
+							public void onBuild(Object object)
+							{
+								if(object instanceof GameFlag<?>)
+								{
+									miniGame.addGameFlag((GameFlag<?>) object);
+								}
+							}
+						}, 
+						index
+					);	
+				}
+				else
+				{
+					try
+					{
+						setIconeAtSlot
+						(
+							new ObjectBuilder
+							(
+								this, 
+								_customPlayer,
+								new ItemStackBuilder(Material.PAPER) 
+								.setName(ChatColor.YELLOW + gameFlagInfos.name())
+								.addLores(gameFlagInfos.description())
+								.build(),
+								gameFlagType
+							)
+							{
+								@Override
+								public void onBuild(Object object)
+								{
+									if(object instanceof GameFlag<?>)
+									{
+										miniGame.addGameFlag((GameFlag<?>) object);
+									}
+								}
+							}, 
+							index
+						);
+					}
+					catch(Exception e)
+					{
+						e.printStackTrace();
+					}	
+				}
 			}
 			else if(_customPlayer.getMiniGame().getCreatorMode() == CreatorMode.PARTIE_A_LA_DEMANDE && _customPlayer.getMiniGame().getGameState() instanceof ConfigurationGameState)
 			{

@@ -1,6 +1,7 @@
 package MiniGameAPI.MiniGame.GameStates;
 
 import org.bukkit.event.EventHandler;
+
 import MiniGameAPI.CustomEvents.PlayerJoinMiniGameEvent;
 import MiniGameAPI.MiniGame.CreatorMode;
 import MiniGameAPI.MiniGame.GameState;
@@ -9,9 +10,9 @@ import net.md_5.bungee.api.ChatColor;
 
 public abstract class WaitingGameState<MG extends MiniGame<?>> extends GameState<MG>
 {
-	public WaitingGameState(MG miniGame)
+	public WaitingGameState()
 	{
-		super(miniGame, "En attente de joueurs");
+		super("En attente de joueurs");
 	}
 
 	@Override

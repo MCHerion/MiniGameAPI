@@ -3,16 +3,14 @@ package MiniGameAPI.MiniGame.GameStates;
 import org.bukkit.event.EventHandler;
 
 import MiniGameAPI.CustomEvents.GameStateActivatedEvent;
-import MiniGameAPI.MiniGame.GameFlag;
 import MiniGameAPI.MiniGame.GameState;
 import MiniGameAPI.MiniGame.MiniGame;
-import net.md_5.bungee.api.ChatColor;
 
 public abstract class ConfigurationGameState<MG extends MiniGame<?>> extends GameState<MG>
 {
-	public ConfigurationGameState(MG miniGame)
+	public ConfigurationGameState()
 	{
-		super(miniGame, "Configuration");
+		super("Configuration");
 	}
 	
 	@EventHandler

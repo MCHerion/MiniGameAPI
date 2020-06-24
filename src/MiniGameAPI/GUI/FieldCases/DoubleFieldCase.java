@@ -1,23 +1,18 @@
 package MiniGameAPI.GUI.FieldCases;
 
-import java.lang.reflect.Field;
-
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import MiniGameAPI.GUI.BuilderCategorie;
 import MiniGameAPI.GUI.FieldCase;
-import MiniGameAPI.GUI.GameFlagBuilder;
-import MiniGameAPI.MiniGame.GameFlags.GameFlagInfos;
 import MiniGameAPI.MiniGamePlayer.MiniGamePlayer;
-import PluginUtils.GUI.Categorie;
 import net.md_5.bungee.api.ChatColor;
 
-public class DoubleFieldCase extends FieldCase
+public abstract class DoubleFieldCase extends FieldCase
 {
-	public DoubleFieldCase(GameFlagBuilder pere, MiniGamePlayer<?> MiniGamePlayer, Field field, FieldInfos fieldInfos) 
+	public DoubleFieldCase(BuilderCategorie pere, MiniGamePlayer<?> MiniGamePlayer, ItemStack item) 
 	{
-		super(pere, MiniGamePlayer, field, Material.GOLD_INGOT, fieldInfos);
+		super(pere, MiniGamePlayer, item);
 		_player.sendMessage(ChatColor.YELLOW + "Veuillez saisir un nombre");
 	}
 

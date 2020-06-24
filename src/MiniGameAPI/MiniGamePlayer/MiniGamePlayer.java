@@ -6,6 +6,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 
 import MiniGameAPI.MainClass;
@@ -14,7 +15,7 @@ import MiniGameAPI.MiniGame.MiniGameHandler;
 import MiniGameAPI.MiniGame.Team;
 import MiniGameAPI.MiniGame.GameFlags.Teams.UnknownTeammatesGameFlag;
 import MiniGameAPI.MiniGamePlayer.Compass.CompassManager;
-import PluginUtils.CustomItems.CustomItem;
+import PluginUtils.CustomItems.CustomItemHandler;
 import PluginUtils.GUI.GUI;
 import PluginUtils.ScoreBoard.BasicScoreBoard;
 import PluginUtils.ScoreBoard.ScoreBoardManager;
@@ -64,6 +65,16 @@ public abstract class MiniGamePlayer<MG extends MiniGame<?>> implements MiniGame
 	}
 	
 	public abstract BasicScoreBoard createBasicScoreBoard();
+	
+	public static boolean isInMiniGame(Player player)
+	{
+		return isInMiniGame(player.getName());
+	}
+	
+	public static boolean isInMiniGame(String name)
+	{
+		return getMiniGamePlayer(name) != null;
+	}
 	
 	public static MiniGamePlayer<?> getMiniGamePlayer(Player player)
 	{
@@ -127,9 +138,40 @@ public abstract class MiniGamePlayer<MG extends MiniGame<?>> implements MiniGame
 		getPlayer().getInventory().setLeggings(null);
 		getPlayer().getInventory().setBoots(null);
 		getPlayer().getInventory().clear();
-		for(CustomItem customItem : _miniGame.getDefaultItems())
+		for(CustomItemHandler customItem : _miniGame.getDefaultItems())
 		{
-			getPlayer().getInventory().addItem(customItem.getItem());
+			giveCustomItem(customItem);
+		}
+	}
+	
+	public boolean hasCustomItem(CustomItemHandler customItemHandler)
+	{
+		for(ItemStack item : getPlayer().getInventory().all(customItemHandler.getCustomItem().getType()).values())
+		{
+			if(customItemHandler.getCustomItem().instanceOfThisItem(item))
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public void giveCustomItem(CustomItemHandler customItemHandler)
+	{
+		if(!hasCustomItem(customItemHandler))
+		{
+			getPlayer().getInventory().addItem(customItemHandler.getCustomItem().getItem());
+		}
+	}
+	
+	public void removeCustomItem(CustomItemHandler customItemHandler)
+	{
+		for(ItemStack item : getPlayer().getInventory().all(customItemHandler.getCustomItem().getType()).values())
+		{
+			if(customItemHandler.getCustomItem().instanceOfThisItem(item))
+			{
+				getPlayer().getInventory().remove(item);
+			}
 		}
 	}
 	

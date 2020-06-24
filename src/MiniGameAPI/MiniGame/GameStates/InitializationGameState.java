@@ -8,9 +8,9 @@ import MiniGameAPI.MiniGame.MiniGame;
 
 public abstract class InitializationGameState<MG extends MiniGame<?>> extends GameState<MG>
 {
-	public InitializationGameState(MG miniGame)
+	public InitializationGameState()
 	{
-		super(miniGame, "Début");
+		super("Début");
 	}
 
 	@EventHandler

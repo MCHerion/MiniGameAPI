@@ -1,8 +1,5 @@
 package MiniGameAPI.GUI;
 
-import java.lang.reflect.Field;
-
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
@@ -10,31 +7,23 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import MiniGameAPI.GUI.FieldCases.FieldInfos;
-import MiniGameAPI.MiniGame.GameFlags.GameFlagInfos;
 import MiniGameAPI.MiniGamePlayer.MiniGamePlayer;
 import PluginUtils.GUI.Case;
 import PluginUtils.GUI.CaseClickedEvent;
-import PluginUtils.GUI.Categorie;
 import PluginUtils.Main.MainClass;
-import PluginUtils.Utils.ItemStackBuilder;
 
 public abstract class FieldCase extends Case
 {
 	protected MiniGamePlayer<?> _customPlayer;
-	protected Field _field;
 	protected Object _object;
 	
-	public FieldCase(GameFlagBuilder pere, MiniGamePlayer<?> MiniGamePlayer, Field field, Material icone, FieldInfos fieldInfos)
+	public FieldCase(BuilderCategorie pere, MiniGamePlayer<?> MiniGamePlayer, ItemStack item)
 	{
 		super
 		(
 			pere, 
 			MiniGamePlayer.getPlayer(),
-			new ItemStackBuilder(icone)
-			.setName(fieldInfos.name())
-			.addLores(fieldInfos.description())
-			.build(), 
+			item,
 			new OnClickHandler()
 			{
 				@Override
@@ -45,7 +34,6 @@ public abstract class FieldCase extends Case
 			}
 		);
 		_customPlayer = MiniGamePlayer;
-		_field = field;
 		new BukkitRunnable()
 		{
 			@Override
@@ -64,11 +52,13 @@ public abstract class FieldCase extends Case
 			setObject(_player, event.getMessage());
 			if(getObject() != null)
 			{
-				((GameFlagBuilder) _pere).setValue(_field.getName(), getObject());
+				onBuild(getObject());
 				destroy();
 			}
 		}
 	}
+	
+	public abstract void onBuild(Object object);
 	
 	public abstract void setObject(Player player, String message);
 	

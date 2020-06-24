@@ -41,9 +41,8 @@ public abstract class GameState<MG extends MiniGame<?>> implements Listener, Act
 	 * @param miniGame MiniGame instance where this GameState is used
 	 * @param name Name of this GameState
 	 */
-	public GameState(MG miniGame, String name)
+	public GameState(String name)
 	{
-		_miniGame = miniGame;
 		_name = name;
 		_skipRequestVoteManager = new RequestManager<Boolean>()
 		{
@@ -69,9 +68,9 @@ public abstract class GameState<MG extends MiniGame<?>> implements Listener, Act
 	@Override
 	public void activate()
 	{
-		if(isSkippable())
+		if(isSkippable() && canUsersSkip())
 		{
-			_miniGame.giveItemToAllPlayers(MiniGameCustomItem.SkipItem);
+			_miniGame.giveCustomItem(MiniGameCustomItem.SkipItem);
 		}
 		Bukkit.getPluginManager().callEvent(new GameStateActivatedEvent(this));
 	}
@@ -79,22 +78,17 @@ public abstract class GameState<MG extends MiniGame<?>> implements Listener, Act
 	@Override
 	public void deactivate()
 	{
-		if(isSkippable())
+		if(isSkippable() && canUsersSkip())
 		{
-			_miniGame.removeItemToAllPlayers(MiniGameCustomItem.SkipItem);	
+			_miniGame.removeCustomItem(MiniGameCustomItem.SkipItem);	
 		}
 		Bukkit.getPluginManager().callEvent(new GameStateDeactivatedEvent(this));
 	}
 	
-	@Override
-	public MG getMiniGame()
+	@SuppressWarnings("unchecked")
+	public void setMiniGame(MiniGame<?> miniGame)
 	{
-		return _miniGame;
-	}
-	
-	public RequestManager<Boolean> getSkipRequestVoteManager()
-	{
-		return _skipRequestVoteManager;
+		_miniGame = (MG) miniGame;
 	}
 	
 	public boolean isNextGameStateCountDownStarted()
@@ -140,7 +134,7 @@ public abstract class GameState<MG extends MiniGame<?>> implements Listener, Act
 			};
 		}
 	}
-	
+		
 	public void onNextGameStateCountDownRun()
 	{
 		skip();
@@ -159,6 +153,17 @@ public abstract class GameState<MG extends MiniGame<?>> implements Listener, Act
 	public int getNextGameStateCountDownTime()
 	{
 		return 30;
+	}
+	
+	@Override
+	public MG getMiniGame()
+	{
+		return _miniGame;
+	}
+	
+	public RequestManager<Boolean> getSkipRequestVoteManager()
+	{
+		return _skipRequestVoteManager;
 	}
 	
 	/**
@@ -183,12 +188,20 @@ public abstract class GameState<MG extends MiniGame<?>> implements Listener, Act
 		return false;
 	}
 	
+	public boolean canUsersSkip()
+	{
+		return false;
+	}
+	
 	/**
 	 * Method used to skip from this GameState to the {@link #getNextGameState()}
 	 */
 	public void skip()
 	{
-		_miniGame.changeGameState(getNextGameState());
+		if(hasNextGameState())
+		{
+			_miniGame.changeGameState(getNextGameState());
+		}
 	}
 	
 	/**

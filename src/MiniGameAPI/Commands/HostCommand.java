@@ -1,7 +1,9 @@
 package MiniGameAPI.Commands;
 
 import org.bukkit.entity.Player;
+
 import MiniGameAPI.MiniGame.CreatorMode;
+import MiniGameAPI.MiniGame.MatchMaking;
 import MiniGameAPI.MiniGame.GameStates.WaitingGameState;
 import MiniGameAPI.MiniGamePlayer.MiniGamePlayer;
 import PluginUtils.Commands.CustomCommand;
@@ -14,7 +16,35 @@ public class HostCommand extends CustomCommand
 		super("host");
 	}
 	
-	@HelpInfos(_description = "Permet de passer une période de jeu")
+	@HelpInfos(_description = "Créez une partie")
+	@Permission(_permission = "minigame.host")
+	public void create(Player player, String mapName)
+	{
+		if(!MiniGamePlayer.isInMiniGame(player))
+		{
+			if(MatchMaking.getInstance().mapExists(mapName))
+			{
+				if(MatchMaking.getInstance().mapUsed(mapName))
+				{
+					MatchMaking.getInstance().createHostGame(player, mapName);
+				}
+				else
+				{
+					player.sendMessage(getTag() + " " + ChatColor.RED + "Une partie est déjà en cours sur cette map !");
+				}
+			}
+			else
+			{
+				player.sendMessage(getTag() + " " + ChatColor.RED + "Cette map n'existe pas !");
+			}
+		}
+		else
+		{
+			player.sendMessage(getTag() + " " + ChatColor.RED + "Vous êtes déjà dans un mini-jeu !");
+		}
+	}
+	
+	@HelpInfos(_description = "Forcer à changer de période de jeu")
 	@Permission(_permission = "minigame.host")
 	public void skip(Player player)
 	{
