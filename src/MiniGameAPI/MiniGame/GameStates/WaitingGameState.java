@@ -6,6 +6,7 @@ import MiniGameAPI.CustomEvents.PlayerJoinMiniGameEvent;
 import MiniGameAPI.MiniGame.CreatorMode;
 import MiniGameAPI.MiniGame.GameState;
 import MiniGameAPI.MiniGame.MiniGame;
+import MiniGameAPI.MiniGameCustomItems.MiniGameCustomItem;
 import net.md_5.bungee.api.ChatColor;
 
 public abstract class WaitingGameState<MG extends MiniGame<?>> extends GameState<MG>
@@ -58,6 +59,10 @@ public abstract class WaitingGameState<MG extends MiniGame<?>> extends GameState
 				{
 					startNextGameStateCountDown();
 				}
+			}
+			else if(_miniGame.getCreatorMode() == CreatorMode.HOST)
+			{
+				_miniGame.getMiniGamePlayer(event.getPlayer()).giveCustomItem(MiniGameCustomItem.GameFlagSelectorItem);
 			}
 		}
 	}

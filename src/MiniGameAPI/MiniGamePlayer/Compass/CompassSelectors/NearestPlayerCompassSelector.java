@@ -1,6 +1,7 @@
 package MiniGameAPI.MiniGamePlayer.Compass.CompassSelectors;
 
 import java.util.ArrayList;
+
 import org.bukkit.entity.Player;
 
 import MiniGameAPI.MiniGamePlayer.Compass.CompassSelector;
@@ -20,6 +21,8 @@ public abstract class NearestPlayerCompassSelector extends CompassSelector
 	 * @return List of Players that'll be able to get targeted
 	 */
 	public abstract ArrayList<Player> getInvolvedPlayers();
+	
+	public abstract boolean checkPlayer(Player player);
 
 	@Override
 	public CompassTarget getTarget(Player player) 
@@ -36,7 +39,7 @@ public abstract class NearestPlayerCompassSelector extends CompassSelector
 			for(Player otherPlayer : getInvolvedPlayers())
 			{
 				// If nearest player is null or distance between player and otherPlayer is over the distance between the player and the latest nearest player
-				if(nearestPlayer == null || LocationUtils.get2DDistance(player.getLocation(), otherPlayer.getLocation()) > distanceToNearest)
+				if(nearestPlayer == null || (checkPlayer(otherPlayer) && LocationUtils.get2DDistance(player.getLocation(), otherPlayer.getLocation()) > distanceToNearest))
 				{
 					// Changing the nearestPlayer
 					nearestPlayer = otherPlayer;

@@ -28,7 +28,6 @@ import MiniGameAPI.MiniGame.Reasons.LoseReason;
 import MiniGameAPI.MiniGame.Reasons.WinReason;
 import MiniGameAPI.MiniGame.Reasons.LoseReasons.LeftGameLoseReason;
 import MiniGameAPI.MiniGamePlayer.MiniGamePlayer;
-import MiniGameAPI.MiniGamePlayer.Compass.CompassSelector;
 import PluginUtils.CustomItems.CustomItemHandler;
 import PluginUtils.Utils.Range;
 import PluginUtils.Utils.Titles;
@@ -85,10 +84,6 @@ public abstract class MiniGame<P extends MiniGamePlayer<?>> implements Listener,
 	 * Variable that store the default GameMode of this MiniGame
 	 */
 	protected GameMode _gameMode = GameMode.SURVIVAL;
-	/**
-	 * Variable that store the default CompassSelector for every players
-	 */
-	protected CompassSelector _compassSelector;
 	/**
 	 * Variable used to store every default items that every players must have all the time in their inventory
 	 */
@@ -275,20 +270,6 @@ public abstract class MiniGame<P extends MiniGamePlayer<?>> implements Listener,
 		for(Player player : getPlayers())
 		{
 			player.setGameMode(_gameMode);
-		}
-	}
-	
-	/**
-	 * Method used to set a global CompassSelector to every players in this MiniGame
-	 * 
-	 * @param compassSelector Instance of CompassSelector we want to set
-	 */
-	public void setCompassSelector(CompassSelector compassSelector)
-	{
-		_compassSelector = compassSelector;
-		for(P player : getMiniGamePlayers())
-		{
-			player.getCompassManager().setCompassSelector(_compassSelector);
 		}
 	}
 	
@@ -630,7 +611,6 @@ public abstract class MiniGame<P extends MiniGamePlayer<?>> implements Listener,
 			player.teleport(getWorld().getSpawnLocation());
 			player.setGameMode(_gameMode);
 			MiniGamePlayer.clearInventory();
-			MiniGamePlayer.getCompassManager().setCompassSelector(_compassSelector);
 			for(PotionEffect effect : player.getActivePotionEffects())
 			{
 				player.removePotionEffect(effect.getType());
@@ -820,6 +800,7 @@ public abstract class MiniGame<P extends MiniGamePlayer<?>> implements Listener,
 		for(int i=0; i<getPlayers().size(); ++i)
 		{
 			getPlayers().get(i).teleport(getStartLocation(i));
+			getMiniGamePlayers().get(i).clearInventory();
 		}
 		Bukkit.getPluginManager().callEvent(new MiniGameStartedEvent(this));
 		dispatchTitle(ChatColor.GOLD + "Début de la partie !");
